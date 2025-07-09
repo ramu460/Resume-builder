@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Coming Soon - Resume Builder{% endblock %}
+
+{% block content %}
+<div class="flex-grow flex items-center justify-center">
+  <div class="container mx-auto px-6 py-16 text-center">
+    <div class="mb-8">
+      <span data-feather="clock" class="h-24 w-24 text-blue-500 mx-auto"></span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Coming Soon</h1>
+    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">We're currently working on this page. Check back soon for amazing content and features!</p>
+    <div class="mb-12">
+      <div class="h-2 w-64 mx-auto bg-gray-200 rounded-full overflow-hidden">
+        <div class="h-full bg-blue-600 rounded-full w-3/4"></div>
+      </div>
+      <p class="text-gray-500 mt-2">Development in progress</p>
+    </div>
+    <a href="{% url 'home' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium text-lg transition duration-200">
+      Return to Home
+    </a>
+  </div>
+</div>
+{% endblock %}

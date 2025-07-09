@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Resumes - ResumeCraft Pro{% endblock %}
+
+{% block extra_head %}
+<style>
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+  .glow {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  }
+  .resume-card:hover .card-actions {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 text-gray-100 px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Futuristic Header -->
+  <div class="max-w-7xl mx-auto mb-12">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
+          MY RESUMES
+        </h1>
+        <div class="flex items-center space-x-4">
+          <div class="h-px flex-1 bg-gradient-to-r from-cyan-500 to-purple-600"></div>
+          <span class="text-sm font-mono text-cyan-300"></span>
+          <div class="h-px flex-1 bg-gradient-to-r from-purple-600 to-cyan-500"></div>
+        </div>
+      </div>
+      
+      <!-- Holographic Create Button -->
+      <a href="{% url 'create_resume' %}" 
+         class="relative group inline-flex items-center px-6 py-3 border border-cyan-400/20 bg-gray-800/50 backdrop-blur-md rounded-lg shadow-lg hover:glow transition-all">
+        <span class="absolute inset-0 rounded-lg bg-gradient-to-r from-cyan-500/30 to-purple-500/30 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+        <i class="fas fa-plus mr-2 text-cyan-300"></i>
+        <span class="relative font-mono">CREATE NEW</span>
+        <span class="ml-3 px-2 py-1 text-xs bg-purple-500/30 text-purple-200 rounded-full border border-purple-400/30">AI</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Cyberpunk Resume Grid -->
+  {% if resumes %}
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for resume in resumes %}
+    <div class="resume-card relative group bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden hover:border-cyan-400/30 transition-all duration-500 hover:shadow-lg hover:shadow-cyan-500/10">
+      <!-- Dynamic Status Bar -->
+      <div class="h-1.5 bg-gradient-to-r 
+        {% cycle 'from-cyan-500 to-blue-500' 'from-purple-500 to-pink-500' 'from-yellow-400 to-orange-500' %}">
+      </div>
+      
+      <!-- Card Content -->
+      <div class="p-6">
+        <div class="flex justify-between items-start mb-4">
+          <!-- Holographic Title -->
+          <h3 class="text-xl font-bold text-white truncate pr-2">
+            {{ resume.title }}
+            <span class="block h-0.5 w-12 mt-1 bg-gradient-to-r from-cyan-400 to-purple-500"></span>
+          </h3>
+          
+          <!-- Template Badge -->
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono bg-gray-700/80 text-cyan-300 border border-cyan-400/20">
+            {{ resume.template|default:"CLASSIC"|upper }}
+          </span>
+        </div>
+        
+        <!-- Digital Metadata -->
+        <div class="space-y-3">
+          <div class="flex items-center text-sm text-gray-400">
+            <i class="fas fa-code-branch mr-2 text-purple-400/80"></i>
+            <span>v{{ resume.version|default:"1.0" }}</span>
+          </div>
+          <div class="flex items-center text-sm text-gray-400">
+            <i class="fas fa-calendar-alt mr-2 text-cyan-400/80"></i>
+            <span>Created: {{ resume.created_at|date:"Y-m-d" }}</span>
+          </div>
+          <div class="flex items-center text-sm text-gray-400">
+            <i class="fas fa-clock mr-2 text-yellow-400/80"></i>
+            <span>Last update: {{ resume.updated_at|timesince }} ago</span>
+          </div>
+        </div>
+        
+        <!-- Hidden Actions (Slide Up on Hover) -->
+        <div class="card-actions opacity-0 transform translate-y-5 transition-all duration-300 mt-6 pt-4 border-t border-gray-700/50 flex justify-between">
+          <a href="{% url 'preview_resume' resume.pk %}" 
+             class="flex-1 mr-2 px-3 py-2 text-center text-sm font-mono bg-gray-700/50 hover:bg-cyan-500/20 rounded border border-gray-600/50 hover:border-cyan-400/50 transition-colors">
+            <i class="fas fa-eye mr-1"></i> PREVIEW
+          </a>
+          <a href="{% url 'download_resume' resume.pk %}" 
+             class="flex-1 mx-2 px-3 py-2 text-center text-sm font-mono bg-gray-700/50 hover:bg-purple-500/20 rounded border border-gray-600/50 hover:border-purple-400/50 transition-colors">
+            <i class="fas fa-file-export mr-1"></i> EXPORT
+          </a>
+          <a href="{% url 'edit_resume' resume.pk %}" 
+             class="flex-1 ml-2 px-3 py-2 text-center text-sm font-mono bg-gray-700/50 hover:bg-blue-500/20 rounded border border-gray-600/50 hover:border-blue-400/50 transition-colors">
+            <i class="fas fa-edit mr-1"></i> EDIT
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <!-- Holographic Empty State -->
+  <div class="max-w-2xl mx-auto mt-20 text-center">
+    <div class="relative inline-block mb-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full blur-xl opacity-20 animate-pulse"></div>
+      <div class="relative h-32 w-32 flex items-center justify-center rounded-full bg-gray-800/80 border-2 border-dashed border-cyan-400/30">
+        <i class="fas fa-file-alt text-5xl text-cyan-400/50"></i>
+      </div>
+    </div>
+    <h2 class="text-3xl font-bold text-white mb-3">NO RESUMES DETECTED</h2>
+    <p class="text-gray-400 mb-8 max-w-md mx-auto">
+      Your resume database appears empty. Initialize a new resume profile to begin.
+    </p>
+    <a href="{% url 'create_resume' %}" 
+       class="inline-flex items-center px-8 py-3 border border-cyan-400/30 bg-gray-800/50 hover:bg-gray-700/70 rounded-lg shadow-lg hover:shadow-cyan-500/20 transition-all">
+      <i class="fas fa-plus mr-2 text-cyan-300"></i>
+      <span class="font-mono">CREATE NEW</span>
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Required Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script>
+  // Floating animation for empty state icon
+  document.querySelectorAll('.floating').forEach(el => {
+    el.style.animation = `float 4s ease-in-out infinite`;
+  });
+</script>
+{% endblock %}

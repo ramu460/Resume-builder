@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Logged Out - Resume Builder{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 text-center">
+    <h2 class="text-2xl font-bold mb-6">You have been logged out</h2>
+    <p class="mb-4">Thanks for using Resume Builder</p>
+    
+    <div class="flex justify-center gap-4">
+        <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md inline-block">
+            Log in Again
+        </a>
+        <a href="{% url 'home' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md inline-block">
+            Return Home
+        </a>
+    </div>
+</div>
+{% endblock %}

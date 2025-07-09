@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Choose Template - Resume Builder{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Select Your Resume Template</h1>
+        <p class="mt-2 text-gray-600">Choose the perfect design that matches your professional style</p>
+      </div>
+      <a href="{% url 'resume_detail' resume.pk %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back to Resume
+      </a>
+    </div>    
+  </div>
+
+  <form method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% csrf_token %}
+    
+    <!-- Modern Template -->
+    <div class="group relative bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-5 text-white">
+        <h3 class="text-xl font-bold">Modern</h3>
+        <p class="text-blue-100 text-sm mt-1">Clean & Contemporary</p>
+      </div>
+      <div class="p-5">
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+          <div class="w-full h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-md mb-3"></div>
+          <div class="w-3/4 h-4 bg-gray-200 rounded-full mb-4 mx-auto"></div>
+          <div class="space-y-2">
+            <div class="w-full h-4 bg-blue-100 rounded-md"></div>
+            <div class="w-2/3 h-3 bg-gray-200 rounded-full"></div>
+            <div class="w-1/2 h-3 bg-gray-200 rounded-full"></div>
+          </div>
+        </div>
+        <button type="submit" name="template" value="modern" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200 shadow-sm group-hover:shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Select Modern
+        </button>
+      </div>
+      <div class="absolute top-0 right-0 mt-3 mr-3">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          Popular
+        </span>
+      </div>
+    </div>
+    
+    <!-- Classic Template -->
+    <div class="group relative bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div class="bg-gradient-to-r from-gray-700 to-gray-800 p-5 text-white">
+        <h3 class="text-xl font-bold">Classic</h3>
+        <p class="text-gray-300 text-sm mt-1">Timeless & Professional</p>
+      </div>
+      <div class="p-5">
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+          <div class="w-3/4 h-4 bg-gray-700 rounded-md mb-4 mx-auto"></div>
+          <div class="w-1/2 h-3 bg-gray-300 rounded-full mb-4 mx-auto"></div>
+          <div class="space-y-2">
+            <div class="w-full h-4 bg-gray-700 rounded-md"></div>
+            <div class="w-2/3 h-3 bg-gray-300 rounded-full"></div>
+            <div class="w-1/2 h-3 bg-gray-300 rounded-full"></div>
+          </div>
+        </div>
+        <button type="submit" name="template" value="classic" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-gray-800 transition-colors duration-200 shadow-sm group-hover:shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Select Classic
+        </button>
+      </div>
+    </div>
+
+    <!-- Creative Template -->
+    <div class="group relative bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-5 text-white">
+        <h3 class="text-xl font-bold">Creative</h3>
+        <p class="text-purple-200 text-sm mt-1">Bold & Expressive</p>
+      </div>
+      <div class="p-5">
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+          <div class="w-full h-8 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-md mb-3"></div>
+          <div class="w-3/4 h-4 bg-gray-200 rounded-full mb-4"></div>
+          <div class="flex mb-2">
+            <div class="w-1 h-6 bg-purple-500 mr-2 rounded-full"></div>
+            <div class="w-2/3 h-6 bg-gray-300 rounded-md"></div>
+          </div>
+          <div class="w-1/2 h-3 bg-gray-200 rounded-full"></div>
+        </div>
+        <button type="submit" name="template" value="creative" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 transition-colors duration-200 shadow-sm group-hover:shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Select Creative
+        </button>
+      </div>
+    </div>
+
+    <!-- Professional Template -->
+    <div class="group relative bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div class="bg-gradient-to-r from-gray-800 to-black p-5 text-white">
+        <h3 class="text-xl font-bold">Professional</h3>
+        <p class="text-gray-300 text-sm mt-1">Corporate & Minimalist</p>
+      </div>
+      <div class="p-5">
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+          <div class="w-3/4 h-4 bg-gray-800 rounded-md mb-4"></div>
+          <div class="w-1/2 h-3 bg-gray-300 rounded-full mb-4"></div>
+          <div class="space-y-2">
+            <div class="w-full h-4 bg-gray-800 rounded-md"></div>
+            <div class="w-full h-1 bg-gray-300 rounded-full"></div>
+            <div class="w-2/3 h-3 bg-gray-300 rounded-full"></div>
+          </div>
+        </div>
+        <button type="submit" name="template" value="professional" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black transition-colors duration-200 shadow-sm group-hover:shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Select Professional
+        </button>
+      </div>
+    </div>
+
+    <!-- ATS Template -->
+    <div class="group relative bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div class="bg-gradient-to-r from-green-600 to-green-700 p-5 text-white">
+        <h3 class="text-xl font-bold">ATS Friendly</h3>
+        <p class="text-green-200 text-sm mt-1">Optimized for Scanning</p>
+      </div>
+      <div class="p-5">
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+          <div class="w-3/4 h-4 bg-green-600 rounded-md mb-4"></div>
+          <div class="w-1/2 h-3 bg-gray-300 rounded-full mb-4"></div>
+          <div class="space-y-2">
+            <div class="w-full h-4 bg-gray-300 rounded-md"></div>
+            <div class="w-2/3 h-3 bg-gray-300 rounded-full"></div>
+            <div class="w-1/2 h-3 bg-gray-300 rounded-full"></div>
+          </div>
+        </div>
+        <button type="submit" name="template" value="ats" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-200 shadow-sm group-hover:shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Select ATS Friendly
+        </button>
+      </div>
+      <div class="absolute top-0 right-0 mt-3 mr-3">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          Recommended
+        </span>
+      </div>
+    </div>
+
+    <!-- Elegant Template -->
+    <div class="group relative bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <div class="bg-gradient-to-r from-pink-500 to-rose-500 p-5 text-white">
+        <h3 class="text-xl font-bold">Elegant</h3>
+        <p class="text-pink-200 text-sm mt-1">Sophisticated & Stylish</p>
+      </div>
+      <div class="p-5">
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+          <div class="w-full h-8 bg-gradient-to-r from-pink-500 to-rose-500 rounded-md mb-3"></div>
+          <div class="w-3/4 h-4 bg-gray-200 rounded-full mb-4"></div>
+          <div class="space-y-2">
+            <div class="w-full h-4 bg-pink-100 rounded-md"></div>
+            <div class="w-2/3 h-3 bg-gray-200 rounded-full"></div>
+            <div class="w-1/2 h-3 bg-gray-200 rounded-full"></div>
+          </div>
+        </div>
+        <button type="submit" name="template" value="elegant" class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-200 shadow-sm group-hover:shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Select Elegant
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

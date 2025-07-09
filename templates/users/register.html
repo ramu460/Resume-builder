@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - Resume Builder{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Create an Account</h2>
+    
+    <!-- reCAPTCHA Status Indicator -->
+    <div id="recaptcha-status" class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center hidden">
+        <svg class="w-6 h-6 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-blue-800 font-medium">reCAPTCHA verification active</span>
+    </div>
+
+    <form method="POST" class="space-y-6" id="registration-form">
+        {% csrf_token %}
+        
+        <!-- Username Field -->
+        <div class="space-y-2">
+            <label for="{{ form.username.id_for_label }}" class="block text-lg font-semibold text-gray-700">Username</label>
+            <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                   placeholder="Enter your username">
+            {% if form.username.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Email Field -->
+        <div class="space-y-2">
+            <label for="{{ form.email.id_for_label }}" class="block text-lg font-semibold text-gray-700">Email</label>
+            <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}"
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                   placeholder="your@email.com">
+            {% if form.email.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Password Field with Toggle -->
+        <div class="space-y-2">
+            <label for="{{ form.password1.id_for_label }}" class="block text-lg font-semibold text-gray-700">Password</label>
+            <div class="relative">
+                <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10"
+                       placeholder="Create password">
+                <button type="button" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 focus:outline-none password-toggle">
+                    <svg class="w-5 h-5 eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <svg class="w-5 h-5 eye-closed hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Real-time Password Validation -->
+            <div id="password-requirements" class="mt-3 space-y-2 hidden">
+                <div class="flex items-center" data-requirement="length">
+                    <span class="requirement-icon w-6 h-6 mr-2 text-gray-400">✗</span>
+                    <span class="text-gray-600">At least 8 characters</span>
+                </div>
+                <div class="flex items-center" data-requirement="uppercase">
+                    <span class="requirement-icon w-6 h-6 mr-2 text-gray-400">✗</span>
+                    <span class="text-gray-600">1 uppercase letter</span>
+                </div>
+                <div class="flex items-center" data-requirement="lowercase">
+                    <span class="requirement-icon w-6 h-6 mr-2 text-gray-400">✗</span>
+                    <span class="text-gray-600">1 lowercase letter</span>
+                </div>
+                <div class="flex items-center" data-requirement="number">
+                    <span class="requirement-icon w-6 h-6 mr-2 text-gray-400">✗</span>
+                    <span class="text-gray-600">1 number</span>
+                </div>
+                <div class="flex items-center" data-requirement="special">
+                    <span class="requirement-icon w-6 h-6 mr-2 text-gray-400">✗</span>
+                    <span class="text-gray-600">1 special character (!@#$...)</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Confirm Password Field with Toggle -->
+        <div class="space-y-2">
+            <label for="{{ form.password2.id_for_label }}" class="block text-lg font-semibold text-gray-700">Confirm Password</label>
+            <div class="relative">
+                <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10"
+                       placeholder="Confirm your password">
+                <button type="button" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 focus:outline-none password-toggle">
+                    <svg class="w-5 h-5 eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <svg class="w-5 h-5 eye-closed hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                    </svg>
+                </button>
+            </div>
+            {% if form.password2.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
+            {% endif %}
+        </div>
+        
+        <!-- reCAPTCHA Field -->
+        {{ form.captcha }}
+        {% if form.captcha.errors %}
+            <p class="text-sm text-red-600">{{ form.captcha.errors.0 }}</p>
+        {% endif %}
+        
+        <!-- Submit Button -->
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-[1.02]">
+            Register Now
+        </button>
+    </form>
+
+    <!-- reCAPTCHA Badge Notice -->
+    <div class="mt-6 text-sm text-gray-500 text-center">
+        <p>This site is protected by reCAPTCHA and the Google 
+        <a href="https://policies.google.com/privacy" target="_blank" class="text-blue-600 hover:underline">Privacy Policy</a> and
+        <a href="https://policies.google.com/terms" target="_blank" class="text-blue-600 hover:underline">Terms of Service</a> apply.</p>
+    </div>
+
+    <div class="mt-6 text-center">
+        <p class="text-gray-600">
+            Already have an account? 
+            <a href="{% url 'login' %}" class="text-blue-600 hover:underline font-semibold">Log in here</a>
+        </p>
+    </div>
+</div>
+
+<!-- JavaScript for Enhanced Interaction -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password visibility toggle
+    document.querySelectorAll('.password-toggle').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            const eyeOpen = this.querySelector('.eye-open');
+            const eyeClosed = this.querySelector('.eye-closed');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeOpen.classList.add('hidden');
+                eyeClosed.classList.remove('hidden');
+            } else {
+                input.type = 'password';
+                eyeOpen.classList.remove('hidden');
+                eyeClosed.classList.add('hidden');
+            }
+        });
+    });
+
+    // Show reCAPTCHA status
+    function showRecaptchaActive() {
+        const statusElement = document.getElementById('recaptcha-status');
+        if (statusElement) statusElement.classList.remove('hidden');
+    }
+
+    // Password validation logic
+    const passwordInput = document.querySelector('input[name="password1"]');
+    const requirements = document.getElementById('password-requirements');
+    
+    if (passwordInput && requirements) {
+        passwordInput.addEventListener('focus', function() {
+            requirements.classList.remove('hidden');
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            
+            updateRequirement('length', password.length >= 8);
+            updateRequirement('uppercase', /[A-Z]/.test(password));
+            updateRequirement('lowercase', /[a-z]/.test(password));
+            updateRequirement('number', /\d/.test(password));
+            updateRequirement('special', /[!@#$%^&*(),.?":{}|<>]/.test(password));
+        });
+        
+        function updateRequirement(type, isValid) {
+            const element = requirements.querySelector(`[data-requirement="${type}"]`);
+            if (element) {
+                const icon = element.querySelector('.requirement-icon');
+                icon.textContent = isValid ? '✓' : '✗';
+                icon.classList.toggle('text-green-500', isValid);
+                icon.classList.toggle('text-gray-400', !isValid);
+                
+                if (isValid) {
+                    icon.classList.add('animate-bounce');
+                    setTimeout(() => icon.classList.remove('animate-bounce'), 1000);
+                }
+            }
+        }
+    }
+
+    // Check reCAPTCHA load status
+    if (typeof grecaptcha !== 'undefined') showRecaptchaActive();
+    else setInterval(() => { if (typeof grecaptcha !== 'undefined') showRecaptchaActive(); }, 100);
+});
+</script>
+
+<style>
+/* Enhanced form styling */
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.animate-bounce {
+    animation: bounce 0.5s;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* reCAPTCHA badge styling */
+.grecaptcha-badge {
+    visibility: visible !important;
+    opacity: 1 !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Eye icon styling */
+.password-toggle svg {
+    transition: all 0.2s ease;
+}
+.password-toggle:hover svg {
+    transform: scale(1.1);
+}
+</style>
+{% endblock %}

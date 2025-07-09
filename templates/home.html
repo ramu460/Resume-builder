@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+
+{% block title %}ResumeForge - #1 Professional Resume Builder{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-20 rounded-b-3xl shadow-xl">
+  <div class="container mx-auto px-6 max-w-6xl">
+    <div class="flex flex-col md:flex-row items-center">
+      <div class="md:w-1/2 mb-12 md:mb-0">
+        <span class="bg-blue-900 text-blue-100 px-4 py-1 rounded-full text-sm font-medium mb-4 inline-block">#1 RANKED RESUME TOOL</span>
+        <h1 class="text-4xl lg:text-5xl font-extrabold mb-6 leading-tight">Craft Your Perfect Resume in Minutes</h1>
+        <p class="text-xl mb-8 text-blue-100">Join over 3 million professionals who landed their dream jobs using our AI-powered resume builder.</p>
+        
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+          {% if user.is_authenticated %}
+            <a href="{% url 'create_resume' %}" class="bg-white text-blue-700 hover:bg-blue-50 font-bold py-4 px-8 rounded-lg text-lg flex items-center justify-center transition duration-300">
+              <span data-feather="file-plus" class="mr-2"></span>
+              Create New Resume
+            </a>
+            <a href="{% url 'resume_list' %}" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-4 px-8 rounded-lg text-lg flex items-center justify-center border border-blue-600 transition duration-300">
+              <span data-feather="list" class="mr-2"></span>
+              My Resumes
+            </a>
+          {% else %}
+            <a href="{% url 'register' %}" class="bg-white text-blue-700 hover:bg-blue-50 font-bold py-4 px-8 rounded-lg text-lg flex items-center justify-center transition duration-300">
+              <span data-feather="user-plus" class="mr-2"></span>
+              Get Started Free
+            </a>
+            <a href="{% url 'login' %}" class="bg-transparent hover:bg-blue-800 text-white font-bold py-4 px-8 rounded-lg text-lg flex items-center justify-center border border-white transition duration-300">
+              <span data-feather="log-in" class="mr-2"></span>
+              Login
+            </a>
+          {% endif %}
+        </div>
+        
+        <div class="flex items-center space-x-6">
+          <div class="flex -space-x-2">
+            <div class="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center text-xs font-medium text-blue-800">JD</div>
+            <div class="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center text-xs font-medium text-green-800">AS</div>
+            <div class="w-8 h-8 rounded-full bg-yellow-200 flex items-center justify-center text-xs font-medium text-yellow-800">MK</div>
+            <div class="w-8 h-8 rounded-full bg-red-200 flex items-center justify-center text-xs font-medium text-red-800">PR</div>
+            <div class="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center text-xs font-medium text-purple-800">+</div>
+          </div>
+          <p class="text-sm text-blue-100">Joined by <span class="font-bold">3M+</span> professionals worldwide</p>
+        </div>
+      </div>
+      <div class="md:w-1/2 md:pl-12">
+        <div class="relative">
+          <div class="absolute -top-4 -left-4 bg-yellow-400 text-blue-900 rounded-lg py-2 px-4 font-bold text-sm shadow-lg z-10 transform rotate-6">
+            MOST TRUSTED
+          </div>
+          <img src="/api/placeholder/600/450" alt="Resume Builder Preview" class="rounded-lg shadow-2xl border-4 border-white">
+          <div class="absolute -bottom-4 -right-2 flex items-center bg-green-500 text-white rounded-lg py-2 px-4 font-bold shadow-lg">
+            <span data-feather="thumbs-up" class="mr-2"></span>
+            <span>98% Success Rate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trusted By Section -->
+<section class="py-8 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <p class="text-center text-gray-500 font-medium mb-6">TRUSTED BY PROFESSIONALS FROM</p>
+    <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+      <div class="text-gray-400 font-bold text-xl">GOOGLE</div>
+      <div class="text-gray-400 font-bold text-xl">AMAZON</div>
+      <div class="text-gray-400 font-bold text-xl">MICROSOFT</div>
+      <div class="text-gray-400 font-bold text-xl">APPLE</div>
+      <div class="text-gray-400 font-bold text-xl">TESLA</div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-16">
+  <div class="container mx-auto px-6 max-w-6xl">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Why We're the #1 Resume Builder</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Our award-winning platform combines powerful features with ease of use to help you create job-winning resumes.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-xl shadow-lg p-8 border-t-4 border-blue-600 hover:transform hover:scale-105 transition duration-300">
+        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-6">
+          <span data-feather="trending-up" class="h-8 w-8 text-blue-600"></span>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">AI-Powered Optimization</h3>
+        <p class="text-gray-600">Our AI analyzes top-performing resumes to suggest optimal content, keywords, and formatting for your industry.</p>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-lg p-8 border-t-4 border-purple-600 hover:transform hover:scale-105 transition duration-300">
+        <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-6">
+          <span data-feather="layout" class="h-8 w-8 text-purple-600"></span>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">Premium Templates</h3>
+        <p class="text-gray-600">Access 50+ ATS-friendly templates designed by hiring managers and recruiting experts.</p>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-lg p-8 border-t-4 border-green-600 hover:transform hover:scale-105 transition duration-300">
+        <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6">
+          <span data-feather="check-circle" class="h-8 w-8 text-green-600"></span>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">ATS Compatibility</h3>
+        <p class="text-gray-600">Beat the applicant tracking systems with perfectly formatted resumes that guarantee your resume gets seen.</p>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+      <div class="bg-white rounded-xl shadow-lg p-8 border-t-4 border-yellow-600 hover:transform hover:scale-105 transition duration-300">
+        <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mb-6">
+          <span data-feather="edit-3" class="h-8 w-8 text-yellow-600"></span>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">Content Suggestions</h3>
+        <p class="text-gray-600">Writer's block? Get industry-specific content suggestions for skills, achievements, and job descriptions.</p>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-lg p-8 border-t-4 border-red-600 hover:transform hover:scale-105 transition duration-300">
+        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-6">
+          <span data-feather="download-cloud" class="h-8 w-8 text-red-600"></span>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">Multiple Export Options</h3>
+        <p class="text-gray-600">Download your resume in PDF, DOCX, or HTML formats ready to submit or print professionally.</p>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-lg p-8 border-t-4 border-indigo-600 hover:transform hover:scale-105 transition duration-300">
+        <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mb-6">
+          <span data-feather="shield" class="h-8 w-8 text-indigo-600"></span>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">Privacy Guaranteed</h3>
+        <p class="text-gray-600">Your data is secure and encrypted. We never share your information with third parties.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-6 max-w-6xl">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Create Your Resume in 3 Simple Steps</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Our streamlined process makes resume creation faster than ever before.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-blue-600 rounded-full text-white flex items-center justify-center text-3xl font-bold mb-6">1</div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">Choose a Template</h3>
+        <p class="text-gray-600">Browse our collection of professionally designed templates tailored for your industry.</p>
+      </div>
+      
+      <div class="flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-blue-600 rounded-full text-white flex items-center justify-center text-3xl font-bold mb-6">2</div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">Add Your Content</h3>
+        <p class="text-gray-600">Fill in your details with our easy-to-use editor, with AI suggestions to guide you.</p>
+      </div>
+      
+      <div class="flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-blue-600 rounded-full text-white flex items-center justify-center text-3xl font-bold mb-6">3</div>
+        <h3 class="text-xl font-bold mb-3 text-gray-900">Download & Apply</h3>
+        <p class="text-gray-600">Export your polished resume and start applying to jobs with confidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-16">
+  <div class="container mx-auto px-6 max-w-6xl">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Success Stories</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Join thousands of professionals who've transformed their careers with our platform.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white p-8 rounded-xl shadow-lg">
+        <div class="flex items-center space-x-1 text-yellow-400 mb-4">
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+        </div>
+        <p class="text-gray-600 mb-6">"Within two weeks of using this resume builder, I landed interviews at three top tech companies. The AI suggestions helped me highlight achievements I would have otherwise missed."</p>
+        <div class="flex items-center">
+          <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+            <span class="font-bold text-blue-700">MJ</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-900">Michael Johnson</h4>
+            <p class="text-gray-500 text-sm">Software Engineer</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-8 rounded-xl shadow-lg">
+        <div class="flex items-center space-x-1 text-yellow-400 mb-4">
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+        </div>
+        <p class="text-gray-600 mb-6">"After struggling for months in my job search, I rebuilt my resume using this tool. The difference was night and day - I received calls for interviews almost immediately."</p>
+        <div class="flex items-center">
+          <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+            <span class="font-bold text-green-700">AT</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-900">Amanda Taylor</h4>
+            <p class="text-gray-500 text-sm">Marketing Director</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-8 rounded-xl shadow-lg">
+        <div class="flex items-center space-x-1 text-yellow-400 mb-4">
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+          <span data-feather="star" class="fill-current"></span>
+        </div>
+        <p class="text-gray-600 mb-6">"As someone changing careers, I was worried about how to present my experience. This platform guided me through the process and I secured a position in my new field within a month."</p>
+        <div class="flex items-center">
+          <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+            <span class="font-bold text-purple-700">DR</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-900">David Rodriguez</h4>
+            <p class="text-gray-500 text-sm">Finance Analyst</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-12 bg-blue-700 text-white">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <div class="text-4xl font-bold mb-2">3M+</div>
+        <p class="text-blue-200">Users Worldwide</p>
+      </div>
+      <div>
+        <div class="text-4xl font-bold mb-2">85%</div>
+        <p class="text-blue-200">Success Rate</p>
+      </div>
+      <div>
+        <div class="text-4xl font-bold mb-2">50+</div>
+        <p class="text-blue-200">Premium Templates</p>
+      </div>
+      <div>
+        <div class="text-4xl font-bold mb-2">4.9/5</div>
+        <p class="text-blue-200">User Rating</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="py-20">
+  <div class="container mx-auto px-6 max-w-4xl text-center">
+    <h2 class="text-3xl lg:text-4xl font-bold mb-6 text-gray-900">Ready to Land Your Dream Job?</h2>
+    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">Join millions of professionals who trust our platform to create standout resumes that get results.</p>
+    
+    <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+      {% if user.is_authenticated %}
+        <a href="{% url 'create_resume' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300">
+          Create Your Resume Now
+        </a>
+        <a href="{% url 'resume_list' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 px-8 rounded-lg text-lg transition duration-300">
+          View My Resumes
+        </a>
+      {% else %}
+        <a href="{% url 'register' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300">
+          Get Started Free
+        </a>
+        <a href="{% url 'login' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 px-8 rounded-lg text-lg transition duration-300">
+          Log In
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- This empty div ensures the footer stays at the bottom with minimal content -->
+<div class="flex-grow"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Initialize any interactive elements if needed
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add any home page specific JavaScript here
+  });
+</script>
+{% endblock %}

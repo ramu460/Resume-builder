@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: resume-builder
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn resume_builder.wsgi
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: resume_builder.settings
+      - key: SECRET_KEY
+        value: your-django-secret-key-here
+      - key: DEBUG
+        value: False

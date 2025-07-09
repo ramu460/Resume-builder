@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Resume Builder - Professional Resumes in Minutes{% endblock %}</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Feather Icons (lightweight icon set) -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  {% block extra_head %} {% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+  <!-- Navigation bar -->
+  <nav class="bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow-lg">
+    <div class="container mx-auto py-4 px-6">
+      <div class="flex justify-between items-center">
+        <a href="{% url 'home' %}" class="flex items-center space-x-2">
+          <span data-feather="file-text" class="h-6 w-6"></span>
+          <span class="text-2xl font-bold">Resume Builder</span>
+        </a>
+        <div class="hidden md:flex space-x-6 items-center">
+          {% if user.is_authenticated %}
+            <a href="{% url 'resume_list' %}" class="text-white hover:text-blue-200 px-3 py-2 text-sm font-medium transition duration-200">My Resumes</a>
+            <a href="{% url 'create_resume' %}" class="text-white hover:text-blue-200 px-3 py-2 text-sm font-medium transition duration-200">Create Resume</a>
+            <a href="{% url 'profile' %}" class="text-white hover:text-blue-200 px-3 py-2 text-sm font-medium transition duration-200">Profile</a>
+             <form method="POST" action="{% url 'logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-full text-sm font-medium transition duration-200">
+              Logout
+            </button>
+          </form>
+
+          {% else %}
+            <a href="{% url 'login' %}" class="hover:text-blue-200 transition duration-200">Login</a>
+            <a href="{% url 'register' %}" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full transition duration-200 font-medium">Get Started</a>
+          {% endif %}
+        </div>
+        <!-- Mobile menu button -->
+        <div class="md:hidden">
+          <button id="mobile-menu-button" class="text-white">
+            <span data-feather="menu" class="h-6 w-6"></span>
+          </button>
+        </div>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden mt-4 pb-2">
+        {% if user.is_authenticated %}
+          <a href="{% url 'resume_list' %}" class="block py-2 hover:text-blue-200">My Resumes</a>
+          <a href="{% url 'create_resume' %}" class="block py-2 hover:text-blue-200">Create Resume</a>
+          <a href="{% url 'profile' %}" class="block py-2 hover:text-blue-200">Profile</a>
+          
+          <form method="POST" action="{% url 'logout' %}" class="block">
+            {% csrf_token %}
+            <button type="submit" class="w-full text-left py-2 hover:text-blue-200">Logout</button>
+          </form>
+
+        {% else %}
+          <a href="{% url 'login' %}" class="block py-2 hover:text-blue-200">Login</a>
+          <a href="{% url 'register' %}" class="block py-2 hover:text-blue-200">Get Started</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Messages -->
+  {% if messages %}
+    <div class="container mx-auto mt-4 px-6">
+      {% for message in messages %}
+        <div class="p-4 mb-4 rounded-md flex items-center
+          {% if message.tags == 'success' %}
+            bg-green-100 border border-green-400 text-green-700
+          {% elif message.tags == 'error' %}
+            bg-red-100 border border-red-400 text-red-700
+          {% else %}
+            bg-blue-100 border border-blue-400 text-blue-700
+          {% endif %}">
+          <span class="mr-2">
+            {% if message.tags == 'success' %}
+              <span data-feather="check-circle"></span>
+            {% elif message.tags == 'error' %}
+              <span data-feather="alert-circle"></span>
+            {% else %}
+              <span data-feather="info"></span>
+            {% endif %}
+          </span>
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Content -->
+  <main class="flex-grow">
+    <div class="{% block content_container_class %}container mx-auto px-6 py-12{% endblock %}">
+      {% block content %}
+      <!-- Default content (homepage) -->
+      <!-- Hero Section -->
+      <section class="bg-gradient-to-b from-blue-600 to-blue-700 text-white py-16">
+        <div class="container mx-auto px-6">
+          <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-8 md:mb-0">
+              <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">Create Professional Resumes in Minutes</h1>
+              <p class="text-xl mb-8">Stand out with a perfect resume that gets you noticed. Our intuitive builder helps you create, customize, and download professional resumes.</p>
+              <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="{% url 'register' %}" class="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-medium text-lg text-center transition duration-200">Get Started Free</a>
+                <a href="#templates" class="border border-white hover:bg-blue-600 px-6 py-3 rounded-lg font-medium text-lg text-center transition duration-200">View Templates</a>
+              </div>
+            </div>
+            <div class="md:w-1/2">
+              <img src="/api/placeholder/600/400" alt="Resume Builder Preview" class="rounded-lg shadow-xl">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+          <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Why Choose Our Resume Builder?</h2>
+          
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition duration-200">
+              <div class="rounded-full bg-blue-100 p-3 inline-block mb-4">
+                <span data-feather="zap" class="h-6 w-6 text-blue-600"></span>
+              </div>
+              <h3 class="text-xl font-semibold mb-2 text-gray-800">Quick & Easy</h3>
+              <p class="text-gray-600">Create a professional resume in minutes with our intuitive drag-and-drop builder.</p>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition duration-200">
+              <div class="rounded-full bg-blue-100 p-3 inline-block mb-4">
+                <span data-feather="layout" class="h-6 w-6 text-blue-600"></span>
+              </div>
+              <h3 class="text-xl font-semibold mb-2 text-gray-800">Professional Templates</h3>
+              <p class="text-gray-600">Choose from dozens of ATS-friendly templates designed by HR professionals.</p>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition duration-200">
+              <div class="rounded-full bg-blue-100 p-3 inline-block mb-4">
+                <span data-feather="edit" class="h-6 w-6 text-blue-600"></span>
+              </div>
+              <h3 class="text-xl font-semibold mb-2 text-gray-800">Customizable</h3>
+              <p class="text-gray-600">Personalize fonts, colors, and layouts to match your professional identity.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Templates Section -->
+      <section id="templates" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+          <h2 class="text-3xl font-bold text-center mb-4 text-gray-800">Professional Resume Templates</h2>
+          <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Choose from our collection of professionally designed templates that help you stand out and get noticed.</p>
+          
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-200">
+              <img src="/api/placeholder/400/300" alt="Modern Template" class="w-full h-56 object-cover">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Modern</h3>
+                <p class="text-gray-600 mb-4">Clean and contemporary design perfect for creative professionals.</p>
+                <a href="{% url 'register' %}" class="text-blue-600 hover:text-blue-800 font-medium">Use this template →</a>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-200">
+              <img src="/api/placeholder/400/300" alt="Professional Template" class="w-full h-56 object-cover">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Professional</h3>
+                <p class="text-gray-600 mb-4">Traditional layout that works well for corporate and executive roles.</p>
+                <a href="{% url 'register' %}" class="text-blue-600 hover:text-blue-800 font-medium">Use this template →</a>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-200">
+              <img src="/api/placeholder/400/300" alt="Minimalist Template" class="w-full h-56 object-cover">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Minimalist</h3>
+                <p class="text-gray-600 mb-4">Simple and elegant design that puts your content front and center.</p>
+                <a href="{% url 'register' %}" class="text-blue-600 hover:text-blue-800 font-medium">Use this template →</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center mt-12">
+            <a href="{% url 'register' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium text-lg transition duration-200">View All Templates</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials Section -->
+      <section class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+          <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">What Our Users Say</h2>
+          
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+              <div class="flex items-center space-x-1 mb-4 text-yellow-400">
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+              </div>
+              <p class="text-gray-600 mb-4">"I landed three interviews in my first week using a resume I created with this tool. The templates are professional and easy to customize."</p>
+              <div class="flex items-center">
+                <div class="bg-blue-100 rounded-full h-12 w-12 flex items-center justify-center mr-4">
+                  <span class="text-blue-700 font-semibold">JD</span>
+                </div>
+                <div>
+                  <h4 class="font-medium text-gray-800">John Doe</h4>
+                  <p class="text-gray-500 text-sm">Marketing Professional</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+              <div class="flex items-center space-x-1 mb-4 text-yellow-400">
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+              </div>
+              <p class="text-gray-600 mb-4">"As someone who struggles with formatting, this tool was a lifesaver. My resume looks amazing and I didn't have to fight with word processors."</p>
+              <div class="flex items-center">
+                <div class="bg-blue-100 rounded-full h-12 w-12 flex items-center justify-center mr-4">
+                  <span class="text-blue-700 font-semibold">JS</span>
+                </div>
+                <div>
+                  <h4 class="font-medium text-gray-800">Jane Smith</h4>
+                  <p class="text-gray-500 text-sm">Software Developer</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+              <div class="flex items-center space-x-1 mb-4 text-yellow-400">
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+                <span data-feather="star" class="fill-current"></span>
+              </div>
+              <p class="text-gray-600 mb-4">"The AI content suggestions helped me highlight achievements I would have overlooked. Highly recommend for anyone updating their resume."</p>
+              <div class="flex items-center">
+                <div class="bg-blue-100 rounded-full h-12 w-12 flex items-center justify-center mr-4">
+                  <span class="text-blue-700 font-semibold">RJ</span>
+                </div>
+                <div>
+                  <h4 class="font-medium text-gray-800">Robert Johnson</h4>
+                  <p class="text-gray-500 text-sm">Project Manager</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="py-16 bg-blue-600 text-white">
+        <div class="container mx-auto px-6 text-center">
+          <h2 class="text-3xl font-bold mb-4">Ready to Create Your Professional Resume?</h2>
+          <p class="text-xl mb-8 max-w-2xl mx-auto">Join thousands of job seekers who have successfully landed their dream jobs with our resume builder.</p>
+          <a href="{% url 'register' %}" class="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-lg font-medium text-lg inline-block transition duration-200">Get Started For Free</a>
+        </div>
+      </section>
+      {% endblock %}
+    </div>
+  </main>
+
+  <!-- Footer - Always at the bottom even with minimal content -->
+  <footer class="bg-gray-800 text-white mt-auto">
+    <div class="container mx-auto py-8 px-6">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Resume Builder</h3>
+          <p class="text-gray-400">Create professional resumes that help you land your dream job.</p>
+          <div class="flex space-x-4 mt-4">
+            <a href="{% url 'coming_soon' %}" class="text-gray-400 hover:text-white">
+              <span data-feather="facebook" class="h-5 w-5"></span>
+            </a>
+            <a href="{% url 'coming_soon' %}" class="text-gray-400 hover:text-white">
+              <span data-feather="twitter" class="h-5 w-5"></span>
+            </a>
+            <a href="{% url 'coming_soon' %}" class="text-gray-400 hover:text-white">
+              <span data-feather="linkedin" class="h-5 w-5"></span>
+            </a>
+            <a href="{% url 'coming_soon' %}" class="text-gray-400 hover:text-white">
+              <span data-feather="instagram" class="h-5 w-5"></span>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Features</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Resume Templates</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">CV Builder</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Cover Letter Builder</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Career Blog</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Resources</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Resume Examples</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Resume Writing Tips</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Career Advice</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Job Interview Tips</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Company</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">About Us</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Contact</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Privacy Policy</a></li>
+            <li><a href="{% url 'coming_soon' %}" class="hover:text-white">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2025 Resume Builder. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Initialize Feather Icons -->
+  <script>
+    feather.replace();
+    
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+
+  </script>
+  
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

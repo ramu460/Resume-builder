@@ -1,0 +1,8 @@
+{
+    "Backend Developer": ["Python", "Django", "API's", "REST", "Flask", "SQL", "Git"],
+    "Frontend Developer": ["JavaScript", "React", "HTML5", "CSS3", "TypeScript", "Redux"],
+    "Data Analyst": ["SQL", "Pandas", "Visualization", "Excel", "Tableau", "Power BI"],
+    "Devops Engineer": ["Docker", "Kubernetes", "AWS", "CI/CD", "Terraform", "Linux"],
+    "Mobile Developer": ["Flutter", "React Native", "Kotlin", "Swift", "Firebase"],
+    "Full Stack Developer": ["JavaScript", "Python", "Java", "React", "Node.js", "Django", "PostgreSQL"]
+}

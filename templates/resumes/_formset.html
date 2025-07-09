@@ -1,0 +1,242 @@
+{% load widget_tweaks %} 
+<div id="{{ id }}" class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-gray-800">{{ title }}</h3>
+        <div class="flex space-x-2">
+            <button type="button" onclick="addFormset('{{ prefix }}')"
+                    class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                <svg class="-ml-0.5 mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Add {{ title }}
+            </button>
+        </div>
+    </div>
+
+    {{ formset.management_form }}
+    <div class="space-y-4" id="{{ prefix }}-forms-container">
+        {% for form in formset %}
+        <div class="border border-gray-200 p-5 rounded-md bg-gray-50 relative group formset-form">
+            <button type="button" onclick="removeForm(this, '{{ prefix }}', {{ forloop.counter0 }})"
+                    class="absolute top-2 right-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for field in form.visible_fields %}
+                <div class="mb-3 relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label_tag }}</label>
+                    <div class="relative">
+                        {% render_field field class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
+                        {% if field.field.widget.input_type != 'date' and field.name not in 'level institution branch degree' %}
+                        <button type="button" onclick="resetField(this)"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                        {% endif %}
+                    </div>
+                    {% if field.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <template id="{{ prefix }}-empty-form">
+        <div class="border border-gray-200 p-5 rounded-md bg-gray-50 relative group formset-form">
+            <button type="button" onclick="removeForm(this, '{{ prefix }}', __prefix__)"
+                    class="absolute top-2 right-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+            {% with formset.empty_form as form %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for field in form.visible_fields %}
+                <div class="mb-3 relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label_tag }}</label>
+                    <div class="relative">
+                        {{ field }}
+                        {% if field.field.widget.input_type != 'date' and field.name not in 'level institution branch degree' %}
+                        <button type="button" onclick="resetField(this)"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+            {% endwith %}
+        </div>
+    </template>
+</div>
+
+<script>
+// Initialize formset counters globally
+window.formsetCounters = window.formsetCounters || {};
+window.formsetCounters['{{ prefix }}'] = {{ formset|length }};
+
+// Add new formset form
+function addFormset(prefix) {
+    const container = document.getElementById(`${prefix}-forms-container`);
+    const template = document.getElementById(`${prefix}-empty-form`);
+
+    if (!container || !template) {
+        console.error(`Container or template not found for prefix: ${prefix}`);
+        return;
+    }
+
+    const newIndex = window.formsetCounters[prefix];
+    const newFormHtml = template.innerHTML.replace(/__prefix__/g, newIndex);
+
+    // Create a temporary div to parse the HTML and get the form element
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = newFormHtml.trim();
+    const newForm = tempDiv.firstElementChild;
+
+    // Update management form count
+    const totalForms = document.getElementById(`id_${prefix}-TOTAL_FORMS`);
+    if (totalForms) {
+        totalForms.value = parseInt(totalForms.value) + 1;
+    } else {
+         console.error(`TOTAL_FORMS input not found for prefix: ${prefix}`);
+         return;
+    }
+
+    window.formsetCounters[prefix]++;
+
+    // Re-attach event listeners or set onclick for the new form's remove button
+    const removeBtn = newForm.querySelector('button[onclick^="removeForm"]');
+    if (removeBtn) {
+        // Update the onclick attribute with the correct index
+        removeBtn.setAttribute('onclick', `removeForm(this, '${prefix}', ${newIndex})`);
+    }
+
+
+    container.appendChild(newForm);
+
+    // Scroll to new form
+    newForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Reset individual field
+function resetField(button) {
+    const input = button.previousElementSibling;
+    if (input) {
+        input.value = '';
+        if (input.tagName === 'SELECT') {
+            input.selectedIndex = 0; // Reset select to the first option
+        } else if (input.type === 'checkbox' || input.type === 'radio') {
+             input.checked = false;
+        }
+        // Trigger change event for potential listeners
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+}
+
+// Reset all fields in a form
+function resetForm(button) {
+    const form = button.closest('.formset-form');
+    if (form) {
+        form.querySelectorAll('input:not([type="hidden"]), textarea, select').forEach(field => {
+             // Do not reset the ID field or DELETE field
+            if (!field.name.includes('-id') && !field.name.includes('-DELETE')) {
+                 if (field.tagName === 'SELECT') {
+                    field.selectedIndex = 0;
+                } else if (field.type === 'checkbox' || field.type === 'radio') {
+                    field.checked = false;
+                } else {
+                    field.value = '';
+                }
+                // Trigger change event for potential listeners
+                field.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+         // If the form was marked for deletion, unmark it
+        const deleteInput = form.querySelector('input[name$="-DELETE"]');
+        if (deleteInput && deleteInput.value === 'on') {
+            deleteInput.value = '';
+            form.style.opacity = ''; // Restore opacity
+            form.style.pointerEvents = ''; // Restore pointer events
+            const removeBtn = form.querySelector('button[onclick^="removeForm"]');
+            if (removeBtn) removeBtn.disabled = false; // Enable the remove button
+        }
+    }
+}
+
+// Remove form function
+function removeForm(button, prefix, index) {
+    const form = button.closest('.formset-form');
+    if (!form) return;
+
+    const idInput = form.querySelector(`input[name="${prefix}-${index}-id"]`); // Use index in name
+    const deleteInput = form.querySelector(`input[name="${prefix}-${index}-DELETE"]`); // Use index in name
+
+    const totalForms = document.getElementById(`id_${prefix}-TOTAL_FORMS`);
+    if (!totalForms) {
+        console.error(`TOTAL_FORMS input not found for prefix: ${prefix}`);
+        return;
+    }
+
+    if (idInput && idInput.value) {
+        // Existing form - mark for deletion
+        if (deleteInput) {
+            deleteInput.value = 'on';
+            form.style.opacity = '0.5'; // Visually indicate deletion
+            form.style.pointerEvents = 'none'; // Disable interactions
+            button.disabled = true; // Disable the remove button itself
+        }
+    } else {
+        // Newly added form - remove directly
+        form.remove();
+
+        // Decrement the total forms count
+        totalForms.value = parseInt(totalForms.value) - 1;
+
+        // Re-index the remaining forms
+        const container = document.getElementById(`${prefix}-forms-container`);
+        const forms = container.querySelectorAll('.formset-form:not([style*="opacity: 0.5"])'); // Only re-index visible forms
+
+        forms.forEach((form, i) => {
+            // Update IDs and names of form fields
+            form.querySelectorAll('[name], [id]').forEach(el => {
+                if (el.name) el.name = el.name.replace(new RegExp(`${prefix}-(\\d+)-`), `${prefix}-${i}-`);
+                if (el.id) el.id = el.id.replace(new RegExp(`id_${prefix}-(\\d+)-`), `id_${prefix}-${i}-`);
+            });
+
+            // Update the onclick attribute of the remove button
+            const removeBtn = form.querySelector('button[onclick^="removeForm"]');
+            if (removeBtn) {
+                 removeBtn.setAttribute('onclick', `removeForm(this, '${prefix}', ${i})`);
+            }
+        });
+    }
+}
+
+
+// Reset all forms in a formset
+function resetFormset(prefix) {
+    const container = document.getElementById(`${prefix}-forms-container`);
+    if (container) {
+        container.querySelectorAll('.formset-form').forEach(form => {
+             // Find the reset fields button within this form and click it
+            const resetFieldsButton = form.querySelector('button[onclick^="resetForm"]');
+            if (resetFieldsButton) {
+                resetFieldsButton.click(); // This will trigger the resetForm function
+            }
+        });
+    }
+}
+
+</script>
