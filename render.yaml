@@ -4,9 +4,11 @@ services:
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn resume_builder.wsgi
+    startCommand: gunicorn resume_builder.wsgi --bind=0.0.0.0:$PORT
     region: singapore
-    preDeployCommand: python manage.py migrate
+    preDeployCommand: | 
+      python manage.py migrate
+      python manage.py collectstatic --noinput
     envVars:
       - key: SECRET_KEY
         value: w%+kz=9e=28pb3#=0z&l)q3q6g9oz&53ujj58zx09cvh9wjhqn  # ✅ secure example
