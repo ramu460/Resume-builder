@@ -1,13 +1,18 @@
 services:
   - type: web
-    name: resume-builder
+    name: Resume-builder
     env: python
-    buildCommand: ""
+    plan: free
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn resume_builder.wsgi
+    region: singapore
+    preDeployCommand: python manage.py migrate
     envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: resume_builder.settings
       - key: SECRET_KEY
-        value: your-django-secret-key-here
+        value: w%+kz=9e=28pb3#=0z&l)q3q6g9oz&53ujj58zx09cvh9wjhqn  # ✅ secure example
       - key: DEBUG
         value: False
+      - key: RECAPTCHA_PUBLIC_KEY
+        value: 6Ldp2T0rAAAAAHX3vMCQT9PKudfmLik6qonViCaR
+      - key: RECAPTCHA_PRIVATE_KEY
+        value: 6Ldp2T0rAAAAAD7lVQlrfaPIO025e3ZjeOBCXfi5
