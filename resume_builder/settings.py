@@ -188,8 +188,8 @@ SIMPLE_JWT = {
 }
 
 # reCAPTCHA Settings
-RECAPTCHA_PUBLIC_KEY = '6Ldp2T0rAAAAAHX3vMCQT9PKudfmLik6qonViCaR'  # Site key
-RECAPTCHA_PRIVATE_KEY = '6Ldp2T0rAAAAAD7lVQlrfaPIO025e3ZjeOBCXfi5'  # Secret key
+RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '')
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '')
 RECAPTCHA_REQUIRED_SCORE = 0.5  # Default threshold (0.5 is medium strictness)
 
 # Optional advanced settings
