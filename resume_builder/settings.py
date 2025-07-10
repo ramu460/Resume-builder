@@ -168,19 +168,18 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.AnonRateThrottle',
-        'resumes.api.throttles.QuickBurstRateThrottle',  # Add your custom throttle
-        'resumes.api.throttles.ResumeCreationThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': '100/day',      # Normal user limit
-        'anon': '10/day',       # Normal anon limit
-        'quickburst': '3/min',  # Custom throttle scope with low limit for testing
-        'resume_create': '5/day',
-        'password_reset': '3/hour',
-    },
+    #'DEFAULT_THROTTLE_CLASSES': [
+    #    'rest_framework.throttling.UserRateThrottle',
+    #    'rest_framework.throttling.AnonRateThrottle',
+    #   'resumes.api.throttles.ResumeCreationThrottle',
+    #],
+    #'DEFAULT_THROTTLE_RATES': {
+    #    'user': '100/day',      # Normal user limit
+    #    'anon': '10/day',       # Normal anon limit
+    #    'quickburst': '3/min',  # Custom throttle scope with low limit for testing
+    #   'resume_create': '5/day',
+    #    'password_reset': '3/hour',
+    #},
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),
