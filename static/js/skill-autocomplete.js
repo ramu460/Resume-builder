@@ -1,5 +1,5 @@
 
-
+//skill-autocomplete.js
 document.addEventListener('DOMContentLoaded', function(){
     const skillInputs = document.querySelectorAll('.skill-autocomplete');
 
