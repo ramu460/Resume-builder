@@ -168,19 +168,21 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    #'DEFAULT_THROTTLE_CLASSES': [
-    #    'rest_framework.throttling.UserRateThrottle',
-    #    'rest_framework.throttling.AnonRateThrottle',
-    #   'resumes.api.throttles.ResumeCreationThrottle',
-    #],
-    #'DEFAULT_THROTTLE_RATES': {
-    #    'user': '100/day',      # Normal user limit
-    #    'anon': '10/day',       # Normal anon limit
-    #    'quickburst': '3/min',  # Custom throttle scope with low limit for testing
-    #   'resume_create': '5/day',
-    #    'password_reset': '3/hour',
-    #},
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+        #'resumes.api.throttles.QuickBurstRateThrottle',  # Add your custom throttle
+        #'resumes.api.throttles.ResumeCreationThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '1000/day',      # Normal user limit
+        'anon': '2000/day',       # Normal anon limit
+        #'quickburst': '3/min',  # Custom throttle scope with low limit for testing
+        #'resume_create': '5/day',
+        'password_reset': '10/hour',
+    },
 }
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -196,7 +198,6 @@ RECAPTCHA_PROXY = {'http': 'http://proxy.example.com'}  # If behind a proxy
 RECAPTCHA_VERIFY_REQUEST_TIMEOUT = 10  # Timeout in seconds
 
 
-# For JWT in Swagger
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {
@@ -208,7 +209,8 @@ SWAGGER_SETTINGS = {
     },
     'USE_SESSION_AUTH': False,
     'JSON_EDITOR': True,
-    'DEFAULT_MODEL_RENDERING': 'example'
+    'DEFAULT_MODEL_RENDERING': 'example',
+    'VALIDATOR_URL': None,  #Swagger 500 error on production
 }
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

@@ -14,7 +14,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
-        fields = ['id', 'name', 'level']
+        fields = ['id', 'name']
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
