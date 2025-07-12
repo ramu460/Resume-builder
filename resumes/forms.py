@@ -93,17 +93,11 @@ class ResumeForm(forms.ModelForm):
         
         # Set up country choices
         self.fields['country'] = forms.ChoiceField(
-            choices=[
-                ('', 'Select Country'),
-                ('IN', 'India'),
-            ],
+            choices=[(c.alpha_2, c.name) for c in pycountry.countries],
             required=False
         )
-
         self.fields['phone_country_code'] = forms.ChoiceField(
-            choices=[
-                ('+91', 'India (+91)'),
-            ],
+            choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries],
             required=False
         )
         
