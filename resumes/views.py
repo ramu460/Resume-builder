@@ -184,7 +184,7 @@ def edit_resume(request, pk):
             experience_formset.save()
             project_formset.save()
             certification_formset.save()
- # Handle skills from the new dropdown system
+            # Handle skills from the new dropdown system
             skill_entries = request.POST.get('skills', '').split(',')
             skill_ids = [entry.strip() for entry in skill_entries if entry.strip()]
             

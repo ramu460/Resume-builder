@@ -215,9 +215,11 @@ def get_countries(request):
 def get_states(request, country_code):
     """API endpoint to get states for a specific country"""
     try:
-        subdivisions = pycountry.subdivisions.get(country_code=country_code)
+        subdivisions = pycountry.subdivisions.get(country_code=country_code.upper())
+        if not subdivisions:
+            return JsonResponse([], safe=False)
         states = [{'code': s.code, 'name': s.name} for s in subdivisions]
         return JsonResponse(states, safe=False)
-    except LookupError:
-        return JsonResponse([], safe=False)  # Return empty list if country not found
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)  # Return empty list if country not found
     

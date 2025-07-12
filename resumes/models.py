@@ -29,18 +29,8 @@ class Skill(models.Model):
 class Resume(models.Model):
     """Model to store basic resume info"""
     
-    TITLE_CHOICES = [
-        ('', 'Select Title'),
-        ('Mr', 'Mr'),
-        ('Mrs', 'Mrs'),
-        ('Miss', 'Miss'),
-        ('Ms', 'Ms'),
-        ('Dr', 'Dr'),
-        ('Prof', 'Prof'),
-    ]
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resumes')
-    title = models.CharField(max_length=10, choices=TITLE_CHOICES, blank=True, null=True)
+    title = models.CharField(max_length=100, verbose_name="Job Title", help_text="e.g., Backend Developer, Frontend Engineer")
     full_name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=20)

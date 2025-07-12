@@ -68,7 +68,6 @@ class ResumeForm(forms.ModelForm):
             'hx-trigger': 'keyup changed delay: 500ms',
             'class': 'job-title-input'
         }),
-        help_text="Type your job title to get skill suggestions"
     )
     class Meta:
         model = Resume
@@ -77,7 +76,8 @@ class ResumeForm(forms.ModelForm):
             'github_url', 'linkedin_url', 'country', 'state', 'phone_country_code'
         ]
         widgets = {
-            'title': forms.Select(attrs={
+            'title': forms.TextInput(attrs={
+                'placeholder': 'e.g. Backend Developer',
                 'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
             }),
             'summary': forms.Textarea(attrs={'rows': 4}),
@@ -103,8 +103,6 @@ class ResumeForm(forms.ModelForm):
             choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries],
             required=False
         )
-        # Set title choices from model
-        self.fields['title'].choices = Resume.TITLE_CHOICES
         
 class EducationForm(forms.ModelForm):
     class Meta:

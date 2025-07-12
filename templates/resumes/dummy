@@ -1,0 +1,85 @@
+✅ 1. Replace “Title” dropdown (Mr/Mrs) with a free-text Job Title
+Since you're using this field as a "Job Title" like Frontend Developer, Backend Engineer, etc., we’ll:
+
+🔧 In models.py:
+Change:
+
+python
+Copy
+Edit
+title = models.CharField(max_length=10, choices=TITLE_CHOICES, blank=True, null=True)
+To:
+
+python
+Copy
+Edit
+title = models.CharField(max_length=100, verbose_name="Job Title", help_text="e.g., Backend Developer, Frontend Engineer")
+And remove TITLE_CHOICES entirely if unused elsewhere.
+
+🔧 In forms.py → ResumeForm:
+Replace this block:
+python
+Copy
+Edit
+'fields': [
+    'title', ...
+],
+'widgets': {
+    'title': forms.Select(attrs={...}),
+    ...
+}
+With:
+python
+Copy
+Edit
+fields = [
+    'title', 'full_name', 'email', 'phone', 'address', 'summary',
+    'github_url', 'linkedin_url', 'country', 'state', 'phone_country_code'
+]
+
+widgets = {
+    'title': forms.TextInput(attrs={
+        'placeholder': 'e.g. Backend Developer',
+        'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+    }),
+    ...
+}
+Also, delete this line if it exists:
+
+python
+Copy
+Edit
+self.fields['title'].choices = Resume.TITLE_CHOICES
+✅ 2. Fix: State dropdown not working in production
+The problem is likely caused by the pycountry.subdivisions.get() in your views.py not working properly on Render.
+
+🔧 Fix it using this code:
+In your views.py, update this:
+
+python
+Copy
+Edit
+subdivisions = pycountry.subdivisions.get(country_code=country_code)
+To this:
+
+python
+Copy
+Edit
+subdivisions = pycountry.subdivisions.get(country_code=country_code.upper())
+Also, surround it with a fallback:
+
+python
+Copy
+Edit
+def get_states(request, country_code):
+    try:
+        subdivisions = pycountry.subdivisions.get(country_code=country_code.upper())
+        if not subdivisions:
+            return JsonResponse([], safe=False)
+        states = [{'code': s.code, 'name': s.name} for s in subdivisions]
+        return JsonResponse(states, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+✅ This ensures the dropdown loads states properly even on Render, and the job title behaves as free-text input like “Frontend Developer”.
+
+Let me know if you want a migration command for this model change, or want me to revise your resume_form.html label to say “Job Title” instead of “Title” 🛠️
