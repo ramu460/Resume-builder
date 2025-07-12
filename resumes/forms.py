@@ -90,17 +90,20 @@ class ResumeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
         # Set up country choices
         self.fields['country'] = forms.ChoiceField(
-            choices=[(c.alpha_2, c.name) for c in pycountry.countries],
+            choices=[
+                ('', 'Select Country'),
+                ('IN', 'India'),
+            ],
             required=False
         )
-        self.fields['state'] = forms.ChoiceField(
-            choices=INDIAN_STATES,  # You'll need to populate this based on country
-            required=False
-        )
+
         self.fields['phone_country_code'] = forms.ChoiceField(
-            choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries],
+            choices=[
+                ('+91', 'India (+91)'),
+            ],
             required=False
         )
         
