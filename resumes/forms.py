@@ -83,9 +83,9 @@ class ResumeForm(forms.ModelForm):
             'summary': forms.Textarea(attrs={'rows': 4}),
             'github_url': forms.URLInput(attrs={'placeholder': 'https://github.com/username'}),
             'linkedin_url': forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/username'}),
-            'country': forms.Select(choices=[(c.alpha_2, c.name) for c in pycountry.countries]),
+            'country': forms.Select(),
+            'phone_country_code': forms.Select(),
             'state': forms.Select(choices=INDIAN_STATES),
-            'phone_country_code': forms.Select(choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries]),
         }
 
     def __init__(self, *args, **kwargs):
