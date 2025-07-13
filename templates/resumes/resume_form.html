@@ -79,49 +79,24 @@
             <form method="POST" class="space-y-6">
                 {% csrf_token %}
                 
-                    <!-- Basic Info -->
-                    <div id="basic-info" class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Basic Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                            <!-- Job Title Field -->
-                            <div class="mb-4">
-                                <label for="id_title" class="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
-                                {% render_field resume_form.title class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Backend Developer" %}
-                                {% if resume_form.title.help_text %}
-                                    <p class="mt-1 text-sm text-gray-500">{{ resume_form.title.help_text }}</p>
-                                {% endif %}
-                                {% if resume_form.title.errors %}
-                                    <p class="text-red-500 text-xs mt-1">{{ resume_form.title.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-
-                            <!-- Other Fields -->
-                            {% for field in resume_form %}
-                                {% if field.name != 'title' and field.name != 'skills' %}
-                                <div class="mb-4">
-                                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
-                                    
-                                    {% if field.name == "country" %}
-                                        {% render_field field id="id_country" class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
-                                    {% elif field.name == "state" %}
-                                        {% render_field field id="id_state" class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
-                                    {% else %}
-                                        {% render_field field class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
-                                    {% endif %}
-
-                                    {% if field.help_text %}
-                                        <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
-                                    {% endif %}
-                                    {% if field.errors %}
-                                        <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
-                                    {% endif %}
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-
+                <!-- Basic Info -->
+                <div id="basic-info" class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Basic Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% for field in resume_form %}
+                        {% if field.name != 'skills' %}
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+                            {% render_field field class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
+                            {% if field.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                        {% endif %}
+                        {% endfor %}
                     </div>
+                </div>
+
                 <!-- formsets -->
                 {% include 'resumes/_formset.html' with formset=education_formset title='Education' prefix='education' id='education' %}
                 {% include 'resumes/_formset.html' with formset=experience_formset title='Work Experience' prefix='experience' id='experience' %}

@@ -83,23 +83,27 @@ class ResumeForm(forms.ModelForm):
             'summary': forms.Textarea(attrs={'rows': 4}),
             'github_url': forms.URLInput(attrs={'placeholder': 'https://github.com/username'}),
             'linkedin_url': forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/username'}),
-            'country': forms.Select(),
-            'phone_country_code': forms.Select(),
+            'country': forms.Select(choices=[(c.alpha_2, c.name) for c in pycountry.countries]),
             'state': forms.Select(choices=INDIAN_STATES),
+            'phone_country_code': forms.Select(choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries]),
         }
 
+   
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # Set only country and phone_country_code explicitly
-        self.fields['country'].choices = [
-            ('', 'Select Country'),
-            ('IN', 'India'),
-        ]
-
-        self.fields['phone_country_code'].choices = [
-            ('+91', 'India (+91)'),
-        ]
+        # Set up country choices
+        self.fields['country'] = forms.ChoiceField(
+            choices=[(c.alpha_2, c.name) for c in pycountry.countries],
+            required=False
+        )
+        self.fields['state'] = forms.ChoiceField(
+            choices=INDIAN_STATES,  # Populate with the predefined states
+            required=False
+        )
+        self.fields['phone_country_code'] = forms.ChoiceField(
+            choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries],
+            required=False
+        )
 
         
 class EducationForm(forms.ModelForm):

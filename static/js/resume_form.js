@@ -89,39 +89,44 @@ window.addEventListener('DOMContentLoaded', function () {
 // window.resetFormset = resetFormset;
 // window.toggleSection = toggleSection; // Keep this if it's used outside the formset script
 
-document.addEventListener('DOMContentLoaded', function () {
-    const countrySelect = document.querySelector('#id_country');
-    const stateSelect = document.querySelector('#id_state');
-
-    countrySelect.addEventListener('change', function () {
-        const countryCode = this.value;
-        fetch(`/get_states/${countryCode}`)
-            .then(response => response.json())
-            .then(data => {
-                stateSelect.innerHTML = '';  // Clear existing
-                if (data.length === 0) {
-                    stateSelect.innerHTML = '<option value="">No states found</option>';
-                } else {
+document.addEventListener('DOMContentLoaded', function() {
+    // Country-State Dynamic Loading
+    const countrySelect = document.getElementById('id_country');
+    const stateSelect = document.getElementById('id_state');
+    
+    if (countrySelect && stateSelect) {
+        // Load states when country changes
+        countrySelect.addEventListener('change', async function() {
+            const countryCode = this.value;
+            stateSelect.innerHTML = '<option value="">Loading states...</option>';
+            
+            if (countryCode) {
+                try {
+                    const response = await fetch(`/api/states/${countryCode}/`);
+                    const states = await response.json();
+                    
                     stateSelect.innerHTML = '<option value="">Select State</option>';
-                    data.forEach(state => {
-                        const option = document.createElement('option');
-                        option.value = state.code;
-                        option.textContent = state.name;
-                        stateSelect.appendChild(option);
+                    states.forEach(state => {
+                        const option = new Option(state.name, state.code);
+                        stateSelect.add(option);
                     });
+                    
+                    // Preselect state if editing existing resume
+                    if ("{{ form.state.value }}") {
+                        stateSelect.value = "{{ form.state.value }}";
+                    }
+                } catch (error) {
+                    console.error('Error loading states:', error);
+                    stateSelect.innerHTML = '<option value="">Error loading states</option>';
                 }
-            })
-            .catch(err => {
-                console.error('Error loading states:', err);
-                stateSelect.innerHTML = '<option value="">Error loading states</option>';
-            });
-    });
-
+            }
+        });
 
         // Trigger initial load if country is pre-selected
         if (countrySelect.value) {
             countrySelect.dispatchEvent(new Event('change'));
         }
+    }
 
     // Social URL Validation
     document.querySelectorAll('input[type="url"]').forEach(input => {
