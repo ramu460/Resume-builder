@@ -88,11 +88,9 @@ window.addEventListener('DOMContentLoaded', function () {
 // window.removeForm = removeForm;
 // window.resetFormset = resetFormset;
 // window.toggleSection = toggleSection; // Keep this if it's used outside the formset script
-
 document.addEventListener('DOMContentLoaded', function() {
     const countrySelect = document.getElementById('id_country');
     const stateSelect = document.getElementById('id_state');
-    const initialStateValue = document.getElementById('initial_state_value')?.value || '';
 
     async function loadStates(countryCode) {
         if (!countryCode) {
@@ -107,28 +105,22 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch(`/api/states/${countryCode}/`);
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            
+
             const states = await response.json();
-            
             stateSelect.innerHTML = '<option value="">Select State</option>';
             states.forEach(state => {
                 const option = new Option(state.name, state.code);
                 stateSelect.add(option);
             });
-
-            if (initialStateValue) {
-                stateSelect.value = initialStateValue;
-            }
-            
             stateSelect.disabled = false;
         } catch (error) {
             console.error('Failed to load states:', error);
             stateSelect.innerHTML = '<option value="">Error loading states</option>';
-            stateSelect.disabled = false;
+            stateSelect.disabled = true;  // Keep disabled if there's an error
         }
     }
 
-    if (countrySelect && stateSelect) {
+    if (countrySelect) {
         countrySelect.addEventListener('change', () => loadStates(countrySelect.value));
         if (countrySelect.value) loadStates(countrySelect.value);
     }
