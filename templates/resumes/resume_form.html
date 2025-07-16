@@ -83,28 +83,28 @@
                 <div id="basic-info" class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">Basic Information</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {% for field in resume_form %}
-                        {% if field.name != 'skills' %}
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
-                            {% render_field field class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
-                            {% if field.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
-                            {% endif %}
-                        </div>
+                    {% for field in resume_form %}
+                    {% if field.name != 'skills' and field.name != 'state' %}
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+                        {% render_field field class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
+                        {% if field.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
                         {% endif %}
-                        {% endfor %}
-                        
-                         <!-- State Field -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ resume_form.state.label }}</label>
-                            {% render_field resume_form.state class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
-                            {% if resume_form.state.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ resume_form.state.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-                        
                     </div>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    <!-- State Field (customized) -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ resume_form.state.label }}</label>
+                        {% render_field resume_form.state class="block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" %}
+                        {% if resume_form.state.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ resume_form.state.errors.0 }}</p>
+                        {% endif %}
+                        <input type="hidden" id="initial_state_value" value="{{ form.state.value|default:'' }}">
+                    </div>
+                </div>
                 </div>
 
                 <!-- formsets -->

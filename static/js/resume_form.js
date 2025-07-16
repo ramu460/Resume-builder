@@ -90,50 +90,46 @@ window.addEventListener('DOMContentLoaded', function () {
 // window.toggleSection = toggleSection; // Keep this if it's used outside the formset script
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Country-State Dynamic Loading
     const countrySelect = document.getElementById('id_country');
     const stateSelect = document.getElementById('id_state');
-    
-    if (countrySelect && stateSelect) {
-        // Load states when country changes
-        countrySelect.addEventListener('change', async function() {
-            const countryCode = this.value;
-            stateSelect.innerHTML = '<option value="">Loading states...</option>';
-            
-            if (countryCode) {
-                try {
-                    const response = await fetch(`/api/states/${countryCode}/`);
-                    const states = await response.json();
-                    
-                    stateSelect.innerHTML = '<option value="">Select State</option>';
-                    states.forEach(state => {
-                        const option = new Option(state.name, state.code);
-                        stateSelect.add(option);
-                    });
-                    
-                    // Preselect state if editing existing resume
-                    if ("{{ resume_form.state.value }}") {
-                        stateSelect.value = "{{ resume_form.state.value }}";
-                    }
-                } catch (error) {
-                    console.error('Error loading states:', error);
-                    stateSelect.innerHTML = '<option value="">Error loading states</option>';
-                }
-            }
-        });
+    const initialStateValue = document.getElementById('initial_state_value')?.value || '';
 
-        // Trigger initial load if country is pre-selected
-        if (countrySelect.value) {
-            countrySelect.dispatchEvent(new Event('change'));
+    async function loadStates(countryCode) {
+        if (!countryCode) {
+            stateSelect.innerHTML = '<option value="">Select country first</option>';
+            stateSelect.disabled = true;
+            return;
+        }
+
+        stateSelect.innerHTML = '<option value="">Loading states...</option>';
+        stateSelect.disabled = true;
+
+        try {
+            const response = await fetch(`/api/states/${countryCode}/`);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            
+            const states = await response.json();
+            
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            states.forEach(state => {
+                const option = new Option(state.name, state.code);
+                stateSelect.add(option);
+            });
+
+            if (initialStateValue) {
+                stateSelect.value = initialStateValue;
+            }
+            
+            stateSelect.disabled = false;
+        } catch (error) {
+            console.error('Failed to load states:', error);
+            stateSelect.innerHTML = '<option value="">Error loading states</option>';
+            stateSelect.disabled = false;
         }
     }
 
-    // Social URL Validation
-    document.querySelectorAll('input[type="url"]').forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.value && !this.value.startsWith('http')) {
-                this.value = 'https://' + this.value;
-            }
-        });
-    });
+    if (countrySelect && stateSelect) {
+        countrySelect.addEventListener('change', () => loadStates(countrySelect.value));
+        if (countrySelect.value) loadStates(countrySelect.value);
+    }
 });
