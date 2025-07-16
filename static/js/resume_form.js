@@ -105,23 +105,36 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch(`/api/states/${countryCode}/`);
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
+            
             const states = await response.json();
+            
+            // Clear and populate states
             stateSelect.innerHTML = '<option value="">Select State</option>';
             states.forEach(state => {
                 const option = new Option(state.name, state.code);
                 stateSelect.add(option);
             });
+            
             stateSelect.disabled = false;
+            
+            // Set the saved state value if editing a resume
+            const savedState = "{{ resume_form.state.value|default:'' }}";
+            if (savedState) stateSelect.value = savedState;
+            
         } catch (error) {
             console.error('Failed to load states:', error);
             stateSelect.innerHTML = '<option value="">Error loading states</option>';
-            stateSelect.disabled = true;  // Keep disabled if there's an error
+            stateSelect.disabled = true;
         }
     }
 
     if (countrySelect) {
+        // Load states when country changes
         countrySelect.addEventListener('change', () => loadStates(countrySelect.value));
-        if (countrySelect.value) loadStates(countrySelect.value);
+        
+        // Load states on page load if country is already selected
+        if (countrySelect.value) {
+            loadStates(countrySelect.value);
+        }
     }
 });
