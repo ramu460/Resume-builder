@@ -4,48 +4,6 @@ from django.urls import reverse_lazy
 from .models import Resume, Education, Experience, Skill, Project, Certification
 import pycountry
 
-# Static choices
-INDIAN_STATES = [
-    ('', 'Select State'),
-    ('AN', 'Andaman and Nicobar Islands'),
-    ('AP', 'Andhra Pradesh'),
-    ('AR', 'Arunachal Pradesh'),
-    ('AS', 'Assam'),
-    ('BR', 'Bihar'),
-    ('CH', 'Chandigarh'),
-    ('CT', 'Chhattisgarh'),
-    ('DN', 'Dadra and Nagar Haveli'),
-    ('DD', 'Daman and Diu'),
-    ('DL', 'Delhi'),
-    ('GA', 'Goa'),
-    ('GJ', 'Gujarat'),
-    ('HR', 'Haryana'),
-    ('HP', 'Himachal Pradesh'),
-    ('JK', 'Jammu and Kashmir'),
-    ('JH', 'Jharkhand'),
-    ('KA', 'Karnataka'),
-    ('KL', 'Kerala'),
-    ('LA', 'Ladakh'),
-    ('LD', 'Lakshadweep'),
-    ('MP', 'Madhya Pradesh'),
-    ('MH', 'Maharashtra'),
-    ('MN', 'Manipur'),
-    ('ML', 'Meghalaya'),
-    ('MZ', 'Mizoram'),
-    ('NL', 'Nagaland'),
-    ('OR', 'Odisha'),
-    ('PY', 'Puducherry'),
-    ('PB', 'Punjab'),
-    ('RJ', 'Rajasthan'),
-    ('SK', 'Sikkim'),
-    ('TN', 'Tamil Nadu'),
-    ('TG', 'Telangana'),
-    ('TR', 'Tripura'),
-    ('UP', 'Uttar Pradesh'),
-    ('UT', 'Uttarakhand'),
-    ('WB', 'West Bengal')
-]
-
 CHENNAI_COLLEGES = [
     ('IIT Madras', 'IIT Madras'),
     ('Anna University', 'Anna University'),
@@ -84,8 +42,10 @@ class ResumeForm(forms.ModelForm):
             'github_url': forms.URLInput(attrs={'placeholder': 'https://github.com/username'}),
             'linkedin_url': forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/username'}),
             'country': forms.Select(choices=[(c.alpha_2, c.name) for c in pycountry.countries]),
-            'state': forms.Select(choices=INDIAN_STATES),
             'phone_country_code': forms.Select(choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries]),
+            'state': forms.Select(attrs={
+                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+            }),
         }
 
    
@@ -96,6 +56,9 @@ class ResumeForm(forms.ModelForm):
             choices=[(c.alpha_2, c.name) for c in pycountry.countries],
             required=False
         )
+        
+        self.fields['state'].required = False
+
         self.fields['phone_country_code'] = forms.ChoiceField(
             choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries],
             required=False

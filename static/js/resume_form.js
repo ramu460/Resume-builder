@@ -88,51 +88,44 @@ window.addEventListener('DOMContentLoaded', function () {
 // window.removeForm = removeForm;
 // window.resetFormset = resetFormset;
 // window.toggleSection = toggleSection; // Keep this if it's used outside the formset script
-document.addEventListener('DOMContentLoaded', function() {
-    const countrySelect = document.getElementById('id_country');
-    const stateSelect = document.getElementById('id_state');
+//state.js
+// Toggle custom state input visibility
+function toggleCustomState() {
+    const container = document.getElementById('custom_state_container');
+    container.classList.toggle('hidden');
+    document.getElementById('custom_state_input').focus();
+}
 
-    async function loadStates(countryCode) {
-        if (!countryCode) {
-            stateSelect.innerHTML = '<option value="">Select country first</option>';
-            stateSelect.disabled = true;
-            return;
-        }
-
-        stateSelect.innerHTML = '<option value="">Loading states...</option>';
-        stateSelect.disabled = true;
-
-        try {
-            const response = await fetch(`/resumes/api/states/${countryCode}/`);
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-            const states = await response.json();
-            stateSelect.innerHTML = '<option value="">Select State</option>';
-            states.forEach(state => {
-                const option = new Option(state.name, state.code);
-                stateSelect.add(option);
-            });
-            
-            // Restore saved state if editing
-            const savedState = "{{ resume_form.state.value|default:'' }}";
-            if (savedState) {
-                stateSelect.value = savedState;
-            }
-            
-            stateSelect.disabled = false;
-        } catch (error) {
-            console.error('Failed to load states:', error);
-            stateSelect.innerHTML = '<option value="">Error loading states</option>';
-            stateSelect.disabled = true;
-        }
-    }
-
-    if (countrySelect) {
-        countrySelect.addEventListener('change', () => loadStates(countrySelect.value));
+// Add custom state to dropdown
+function addCustomState() {
+    const input = document.getElementById('custom_state_input');
+    const select = document.getElementById('id_state');
+    const customValue = input.value.trim();
+    
+    if (customValue) {
+        // Create and select new option
+        const option = new Option(customValue, customValue);
+        select.add(option);
+        select.value = customValue;
         
-        // Load states on initial page load if country is selected
-        if (countrySelect.value) {
-            loadStates(countrySelect.value);
+        // Reset input
+        input.value = '';
+        document.getElementById('custom_state_container').classList.add('hidden');
+    }
+}
+
+// Initialize for edit mode
+document.addEventListener('DOMContentLoaded', function() {
+    const savedState = "{{ resume_form.state.value|default:'' }}";
+    if (savedState) {
+        const select = document.getElementById('id_state');
+        
+        // Add saved state if not in options
+        if (!Array.from(select.options).some(opt => opt.value === savedState)) {
+            const option = new Option(savedState, savedState);
+            select.add(option);
         }
+        
+        select.value = savedState;
     }
 });

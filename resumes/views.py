@@ -320,3 +320,4 @@ def choose_template(request, pk):
 def coming_soon(request):
     return render(request, 'resumes/coming_soon.html')
 
+
