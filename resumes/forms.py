@@ -92,25 +92,19 @@ class ResumeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Set up country choices
-        
-        # Country choices
-        self.fields['country'].choices = [('', 'Select Country')] + [
-            (c.alpha_2, c.name) for c in pycountry.countries
-        ]
-        
-        # Initialize state choices based on current country
-        if self.instance and self.instance.country:
-            try:
-                subdivisions = pycountry.subdivisions.get(country_code=self.instance.country.upper())
-                self.fields['state'].choices = [('', 'Select State')] + [
-                    (s.code, s.name) for s in subdivisions
-                ]
-                self.fields['state'].widget.attrs.pop('disabled', None)
-            except Exception:
-                self.fields['state'].choices = [('', 'No states available')]
-        else:
-            self.fields['state'].choices = [('', 'Select country first')]
-            self.fields['state'].widget.attrs['disabled'] = 'disabled'
+        self.fields['country'] = forms.ChoiceField(
+            choices=[(c.alpha_2, c.name) for c in pycountry.countries],
+            required=False
+        )
+        self.fields['state'] = forms.ChoiceField(
+            choices=INDIAN_STATES,  # Populate with the predefined states
+            required=False
+        )
+        self.fields['phone_country_code'] = forms.ChoiceField(
+            choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries],
+            required=False
+        )
+
         
 class EducationForm(forms.ModelForm):
     class Meta:
