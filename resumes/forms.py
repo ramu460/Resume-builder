@@ -41,29 +41,30 @@ class ResumeForm(forms.ModelForm):
             'summary': forms.Textarea(attrs={'rows': 4}),
             'github_url': forms.URLInput(attrs={'placeholder': 'https://github.com/username'}),
             'linkedin_url': forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/username'}),
-            'country': forms.Select(choices=[(c.alpha_2, c.name) for c in pycountry.countries]),
-            'phone_country_code': forms.Select(choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries]),
-            'state': forms.Select(attrs={
+            'country': forms.Select(attrs={
+                'hx-get': reverse_lazy('get_states'),
+                'hx-target': '#id_state',
+                'hx-trigger': 'change',
                 'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+            }, choices=[('', 'Select Country')] + [(c.alpha_2, c.name) for c in pycountry.countries]),
+            'state': forms.Select(attrs={
+                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'disabled': 'disabled'
             }),
+            'phone_country_code': forms.Select(choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries]),
         }
 
-   
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Set up country choices
-        self.fields['country'] = forms.ChoiceField(
-            choices=[(c.alpha_2, c.name) for c in pycountry.countries],
-            required=False
-        )
-        
-        self.fields['state'].required = False
-
-        self.fields['phone_country_code'] = forms.ChoiceField(
-            choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries],
-            required=False
-        )
-
+        # Set initial state choices based on the selected country if it exists
+        if self.instance and self.instance.country:
+            try:
+                subdivisions = pycountry.subdivisions.get(country_code=self.instance.country.upper())
+                state_choices = [(s.code, s.name) for s in subdivisions]
+                self.fields['state'].widget.choices = state_choices
+                self.fields['state'].widget.attrs.pop('disabled', None)
+            except:
+                pass
         
 class EducationForm(forms.ModelForm):
     class Meta:

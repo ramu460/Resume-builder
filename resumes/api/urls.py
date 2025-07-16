@@ -6,7 +6,6 @@ from resumes.api.views import (
     SkillListCreateView, SkillDetailView,
     ProjectListCreateView, ProjectDetailView,
     CertificationListCreateView, CertificationDetailView, TestThrottleView,
-    get_countries, get_states
 )
 
 urlpatterns = [
@@ -28,8 +27,6 @@ urlpatterns = [
 
     path('api/resumes/<int:resume_id>/certification/', CertificationListCreateView.as_view(), name='api-certification-list'),
     path('api/certification/<int:pk>/', CertificationDetailView.as_view(), name='api-certification-detail'),
-
-    path('api/countries/', get_countries, name='api-countries'),
 
     path('api/test-throttle/', TestThrottleView.as_view(), name='test-throttle'),
     

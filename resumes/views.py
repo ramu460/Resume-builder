@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory, inlineformset_factory
 from django.http import HttpResponse
+import pycountry
 from requests import request
 from .models import Resume, Education, Experience, Skill, Project, Certification
 from .forms import (ResumeForm, EducationForm, ExperienceForm, ProjectForm, CertificationForm)
@@ -321,3 +322,23 @@ def coming_soon(request):
     return render(request, 'resumes/coming_soon.html')
 
 
+
+# Add these new function-based views at the bottom of the file
+def get_countries(request):
+    """API endpoint to get all countries with phone codes"""
+    countries = [
+        {'code': c.alpha_2, 'name': c.name, 'phone_code': c.numeric}
+        for c in pycountry.countries
+    ]
+    return JsonResponse(countries, safe=False)
+
+def get_states(request, country_code):
+    """API endpoint to get states for a specific country"""
+    try:
+        subdivisions = pycountry.subdivisions.get(country_code=country_code.upper())
+        if not subdivisions:
+            return JsonResponse([], safe=False)
+        states = [{'code': s.code, 'name': s.name} for s in subdivisions]
+        return JsonResponse(states, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)  # Return empty list if country not found

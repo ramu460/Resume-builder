@@ -1,8 +1,6 @@
 from rest_framework import generics, permissions
 from resumes.models import Certification, Education, Experience, Project, Resume, Skill
 from resumes.api.serializers import (CertificationSerializer, EducationSerializer, ExperienceSerializer, ProjectSerializer, ResumeSerializer, SkillSerializer)
-from django.http import JsonResponse
-import pycountry
 from rest_framework import status
 from rest_framework.response import Response
 from .throttles import QuickBurstRateThrottle
@@ -202,24 +200,3 @@ class CertificationDetailView(generics.RetrieveUpdateDestroyAPIView):
         super().destroy(request, *args, **kwargs)
         return Response({"message": "Certification data deleted successfully!"}, status=status.HTTP_200_OK)
 
-
-# Add these new function-based views at the bottom of the file
-def get_countries(request):
-    """API endpoint to get all countries with phone codes"""
-    countries = [
-        {'code': c.alpha_2, 'name': c.name, 'phone_code': c.numeric}
-        for c in pycountry.countries
-    ]
-    return JsonResponse(countries, safe=False)
-
-def get_states(request, country_code):
-    """API endpoint to get states for a specific country"""
-    try:
-        subdivisions = pycountry.subdivisions.get(country_code=country_code.upper())
-        if not subdivisions:
-            return JsonResponse([], safe=False)
-        states = [{'code': s.code, 'name': s.name} for s in subdivisions]
-        return JsonResponse(states, safe=False)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)  # Return empty list if country not found
-    
