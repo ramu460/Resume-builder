@@ -76,7 +76,7 @@
 
         <!-- Main form content -->
         <div class="md:w-3/4">
-            <form method="post" class="space-y-6 bg-white p-6 rounded-lg shadow-md">
+            <form method="post" class="space-y-6">
                 {% csrf_token %}
                 
                     <!-- Basic Info -->
@@ -223,26 +223,42 @@
 
 {% block extra_js %}
 <script src="{% static 'js/resume_form.js' %}"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6"></script>
 
 <script>
+        // Initialize HTMX for country-state dynamic loading
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configure country select to trigger state loading
+        const countrySelect = document.getElementById('id_country');
+        if (countrySelect) {
+            countrySelect.addEventListener('change', function() {
+                const countryId = this.value;
+                if (countryId) {
+                    htmx.trigger('#id_state', 'change');
+                }
+            });
+            
+            // Initialize HTMX on the state field
+            htmx.process(document.getElementById('id_state'));
+        }
+    });
+
     // Enable state field when countries load
-document.body.addEventListener('htmx:afterSwap', function(evt) {
-    const stateSelect = document.getElementById('id_state');
-    if (stateSelect && stateSelect.innerHTML.trim() !== '') {
-        stateSelect.removeAttribute('disabled');
-    }
-});
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        const stateSelect = document.getElementById('id_state');
+        if (stateSelect && stateSelect.innerHTML.trim() !== '') {
+            stateSelect.removeAttribute('disabled');
+        }
+    });
 
-// Error handling
-document.body.addEventListener('htmx:responseError', function(evt) {
-    if (evt.detail.requestConfig.path.includes('/get-states/')) {
-        document.getElementById('state-errors').textContent = 
-            'Failed to load states. Please try again.';
-    }
-});
-</script>
+    // Error handling
+    document.body.addEventListener('htmx:responseError', function(evt) {
+        if (evt.detail.requestConfig.path.includes('/get-states/')) {
+            document.getElementById('state-errors').textContent = 
+                'Failed to load states. Please try again.';
+        }
+    });
 
-<script>
 // Initialize selected skills
 let selectedSkills = new Set();
 
