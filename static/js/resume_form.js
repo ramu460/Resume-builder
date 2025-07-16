@@ -112,8 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     
                     // Preselect state if editing existing resume
-                    if ("{{ form.state.value }}") {
-                        stateSelect.value = "{{ form.state.value }}";
+                    if ("{{ resume_form.state.value }}") {
+                        stateSelect.value = "{{ resume_form.state.value }}";
                     }
                 } catch (error) {
                     console.error('Error loading states:', error);
@@ -137,5 +137,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
-

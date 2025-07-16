@@ -10,6 +10,7 @@ from resumes.api.views import (
 )
 
 urlpatterns = [
+
     path('api/resumes/', ResumeListCreateView.as_view(), name='api-resume-list'),
     path('api/resumes/<int:pk>/', ResumeDetailView.as_view(), name='api-resume-detail'),
 
@@ -31,5 +32,6 @@ urlpatterns = [
     path('api/countries/', get_countries, name='api-countries'),
     path('api/states/<str:country_code>/', get_states, name='api-states'),
 
-     path('api/test-throttle/', TestThrottleView.as_view(), name='test-throttle'),
+    path('api/test-throttle/', TestThrottleView.as_view(), name='test-throttle'),
+    
 ]
