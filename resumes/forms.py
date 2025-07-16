@@ -50,7 +50,7 @@ class ResumeForm(forms.ModelForm):
             }, choices=[('', 'Select Country')] + [(c.alpha_2, c.name) for c in pycountry.countries]),
             'state': forms.Select(attrs={
                 'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
-                'disabled': 'disabled'
+                'disabled': True,
             }),
             'phone_country_code': forms.Select(choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries]),
         }
