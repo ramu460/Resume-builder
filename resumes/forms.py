@@ -27,6 +27,7 @@ class ResumeForm(forms.ModelForm):
             'class': 'job-title-input'
         }),
     )
+
     class Meta:
         model = Resume
         fields = [
@@ -63,7 +64,7 @@ class ResumeForm(forms.ModelForm):
                 state_choices = [(s.code, s.name) for s in subdivisions]
                 self.fields['state'].widget.choices = state_choices
                 self.fields['state'].widget.attrs.pop('disabled', None)
-            except:
+            except Exception:
                 pass
         
 class EducationForm(forms.ModelForm):
