@@ -30,7 +30,6 @@ urlpatterns = [
     path('api/certification/<int:pk>/', CertificationDetailView.as_view(), name='api-certification-detail'),
 
     path('api/countries/', get_countries, name='api-countries'),
-    path('api/states/<str:country_code>/', get_states, name='api-states'),
 
     path('api/test-throttle/', TestThrottleView.as_view(), name='test-throttle'),
     
