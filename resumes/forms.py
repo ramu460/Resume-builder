@@ -17,52 +17,70 @@ CHENNAI_COLLEGES = [
     ('Other', 'Other'),
 ]
 
-class ResumeForm(forms.ModelForm):
-    job_title = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            'hx-get': '/get_skill_suggestions/',
-            'hx-target': '#skill-suggestions',
-            'hx-trigger': 'keyup changed delay: 500ms',
-            'class': 'job-title-input'
-        }),
-    )
 
+class ResumeForm(forms.ModelForm):
     class Meta:
         model = Resume
         fields = [
-            'title', 'full_name', 'email', 'phone', 'address', 'summary',
-            'github_url', 'linkedin_url', 'country', 'state', 'phone_country_code'
+            'title', 'full_name', 'email', 'phone', 'phone_country_code',
+            'address', 'summary', 'github_url', 'linkedin_url',
+            'country', 'state'
         ]
+
         widgets = {
             'title': forms.TextInput(attrs={
                 'placeholder': 'e.g. Backend Developer',
                 'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
             }),
-            'summary': forms.Textarea(attrs={'rows': 4}),
-            'github_url': forms.URLInput(attrs={'placeholder': 'https://github.com/username'}),
-            'linkedin_url': forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/username'}),
-            'country': forms.Select(attrs={
-                'hx-get': reverse_lazy('get_states'),
-                'hx-target': '#id_state',
-                'hx-trigger': 'change',
+            'summary': forms.Textarea(attrs={
+                'rows': 4,
                 'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
-            }, choices=[('', 'Select Country')] + [(c.alpha_2, c.name) for c in pycountry.countries]),
-            'state': forms.Select(attrs={
-                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
-                'disabled': True,
             }),
-            'phone_country_code': forms.Select(choices=[(c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries]),
+            'github_url': forms.URLInput(attrs={
+                'placeholder': 'https://github.com/username',
+                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+            }),
+            'linkedin_url': forms.URLInput(attrs={
+                'placeholder': 'https://linkedin.com/in/username',
+                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+            }),
+            'phone_country_code': forms.Select(
+                choices=[('', 'Select Code')] + [
+                    (c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries
+                ],
+                attrs={
+                    'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                }
+            ),
+            'country': forms.Select(
+                choices=[('', 'Select Country')] + [
+                    (c.alpha_2, c.name) for c in pycountry.countries
+                ],
+                attrs={
+                    'id': 'id_country',
+                    'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                }
+            ),
+            'state': forms.Select(
+                choices=[('', 'Select State')],
+                attrs={
+                    'id': 'id_state',
+                    'disabled': True,
+                    'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                }
+            ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Set initial state choices based on the selected country if it exists
+
+        # Dynamically populate state dropdown if editing existing resume
         if self.instance and self.instance.country:
             try:
                 subdivisions = pycountry.subdivisions.get(country_code=self.instance.country.upper())
-                state_choices = [(s.code, s.name) for s in subdivisions]
-                self.fields['state'].widget.choices = state_choices
+                self.fields['state'].widget.choices = [('', 'Select State')] + [
+                    (s.code, s.name) for s in subdivisions
+                ]
                 self.fields['state'].widget.attrs.pop('disabled', None)
             except Exception:
                 pass

@@ -325,20 +325,32 @@ def coming_soon(request):
 
 # Add these new function-based views at the bottom of the file
 def get_countries(request):
-    """API endpoint to get all countries with phone codes"""
+    """
+    API endpoint to return all countries (code + name)
+    Example: [{"code": "IN", "name": "India"}, ...]
+    """
     countries = [
-        {'code': c.alpha_2, 'name': c.name, 'phone_code': c.numeric}
+        {'code': c.alpha_2, 'name': c.name}
         for c in pycountry.countries
     ]
     return JsonResponse(countries, safe=False)
 
-def get_states(request, country_code):
-    """API endpoint to get states for a specific country"""
+
+def get_states(request):
+    """
+    API endpoint to return states for a given country_code (GET param)
+    Example: /api/get-states/?country_code=IN
+    """
+    country_code = request.GET.get("country_code")
+    if not country_code:
+        return JsonResponse({"error": "Missing country_code"}, status=400)
+
     try:
         subdivisions = pycountry.subdivisions.get(country_code=country_code.upper())
         if not subdivisions:
             return JsonResponse([], safe=False)
+
         states = [{'code': s.code, 'name': s.name} for s in subdivisions]
         return JsonResponse(states, safe=False)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)  # Return empty list if country not found
+        return JsonResponse({'error': str(e)}, status=500)

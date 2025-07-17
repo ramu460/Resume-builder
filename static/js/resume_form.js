@@ -90,117 +90,56 @@ window.addEventListener('DOMContentLoaded', function () {
 // window.toggleSection = toggleSection; // Keep this if it's used outside the formset script
 //state.js
 // Toggle custom state input visibility
-document.addEventListener('DOMContentLoaded', function () {
-    const countrySelect = document.getElementById('id_country');
-    const stateSelect = document.getElementById('id_state');
+document.addEventListener("DOMContentLoaded", function () {
+    const countrySelect = document.getElementById("id_country");
+    const stateSelect = document.getElementById("id_state");
 
-    const countryStateData = {
-        countries: [
-            { code: "US", name: "United States" },
-            { code: "CA", name: "Canada" },
-            { code: "GB", name: "United Kingdom" },
-            { code: "AU", name: "Australia" },
-            { code: "IN", name: "India" }
-        ],
-        states: {
-            'US': [
-                { code: "CA", name: "California" },
-                { code: "TX", name: "Texas" },
-                { code: "NY", name: "New York" }
-                // Add more if needed
-            ],
-            'CA': [
-                { code: "ON", name: "Ontario" },
-                { code: "QC", name: "Quebec" },
-                { code: "BC", name: "British Columbia" }
-                // Add more if needed
-            ],
-            'IN': [
-                { code: "AP", name: "Andhra Pradesh" },
-                { code: "AR", name: "Arunachal Pradesh" },
-                { code: "AS", name: "Assam" },
-                { code: "BR", name: "Bihar" },
-                { code: "CT", name: "Chhattisgarh" },
-                { code: "GA", name: "Goa" },
-                { code: "GJ", name: "Gujarat" },
-                { code: "HR", name: "Haryana" },
-                { code: "HP", name: "Himachal Pradesh" },
-                { code: "JH", name: "Jharkhand" },
-                { code: "KA", name: "Karnataka" },
-                { code: "KL", name: "Kerala" },
-                { code: "MP", name: "Madhya Pradesh" },
-                { code: "MH", name: "Maharashtra" },
-                { code: "MN", name: "Manipur" },
-                { code: "ML", name: "Meghalaya" },
-                { code: "MZ", name: "Mizoram" },
-                { code: "NL", name: "Nagaland" },
-                { code: "OD", name: "Odisha" },
-                { code: "PB", name: "Punjab" },
-                { code: "RJ", name: "Rajasthan" },
-                { code: "SK", name: "Sikkim" },
-                { code: "TN", name: "Tamil Nadu" },
-                { code: "TG", name: "Telangana" },
-                { code: "TR", name: "Tripura" },
-                { code: "UP", name: "Uttar Pradesh" },
-                { code: "UT", name: "Uttarakhand" },
-                { code: "WB", name: "West Bengal" },
-                // Union Territories
-                { code: "AN", name: "Andaman and Nicobar Islands" },
-                { code: "CH", name: "Chandigarh" },
-                { code: "DN", name: "Dadra and Nagar Haveli and Daman and Diu" },
-                { code: "DL", name: "Delhi" },
-                { code: "JK", name: "Jammu and Kashmir" },
-                { code: "LA", name: "Ladakh" },
-                { code: "LD", name: "Lakshadweep" },
-                { code: "PY", name: "Puducherry" }
-            ],
-            'AU': [
-                { code: "NSW", name: "New South Wales" },
-                { code: "VIC", name: "Victoria" },
-                { code: "QLD", name: "Queensland" }
-                // Add more if needed
-            ],
-            'GB': [
-                { code: "ENG", name: "England" },
-                { code: "SCT", name: "Scotland" },
-                { code: "WLS", name: "Wales" },
-                { code: "NIR", name: "Northern Ireland" }
-            ]
-        }
-    };
-
-    countryStateData.countries.forEach(country => {
-        const option = document.createElement('option');
-        option.value = country.code;
-        option.textContent = country.name;
-
-        if (country.code === "{{ form.country.value|default:'' }}") {
-            option.selected = true;
-        }
-
-        countrySelect.appendChild(option);
-    });
-
-    countrySelect.addEventListener('change', function () {
-        stateSelect.disabled = !this.value;
-        stateSelect.innerHTML = '<option value="">Select a state</option>';
-
-        if (this.value && countryStateData.states[this.value]) {
-            countryStateData.states[this.value].forEach(state => {
-                const option = document.createElement('option');
-                option.value = state.code;
-                option.textContent = state.name;
-
-                if (state.code === "{{ form.state.value|default:'' }}") {
+    // Populate country dropdown
+    fetch("/api/get-countries/")
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(country => {
+                const option = document.createElement("option");
+                option.value = country.code;
+                option.textContent = country.name;
+                if (country.value === countrySelect.dataset.selected) {
                     option.selected = true;
                 }
-
-                stateSelect.appendChild(option);
+                countrySelect.appendChild(option);
             });
-        }
-    });
+        });
 
-    if (countrySelect.value) {
-        countrySelect.dispatchEvent(new Event('change'));
-    }
+    // On country change, load states
+    countrySelect.addEventListener("change", function () {
+        const countryCode = this.value;
+        stateSelect.innerHTML = '<option value="">Loading...</option>';
+        stateSelect.setAttribute("disabled", true);
+
+        if (!countryCode) {
+            stateSelect.innerHTML = '<option value="">Select a state</option>';
+            return;
+        }
+
+        fetch(`/api/get-states/?country_code=${countryCode}`)
+            .then(res => res.json())
+            .then(states => {
+                stateSelect.innerHTML = '<option value="">Select a state</option>';
+                if (states.length > 0) {
+                    states.forEach(state => {
+                        const option = document.createElement("option");
+                        option.value = state.code;
+                        option.textContent = state.name;
+                        stateSelect.appendChild(option);
+                    });
+                    stateSelect.removeAttribute("disabled");
+                } else {
+                    stateSelect.innerHTML = '<option value="">No states available</option>';
+                    stateSelect.setAttribute("disabled", true);
+                }
+            }).catch(err => {
+                stateSelect.innerHTML = '<option value="">Error loading states</option>';
+                stateSelect.setAttribute("disabled", true);
+                console.error(err);
+            });
+    });
 });
