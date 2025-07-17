@@ -90,42 +90,117 @@ window.addEventListener('DOMContentLoaded', function () {
 // window.toggleSection = toggleSection; // Keep this if it's used outside the formset script
 //state.js
 // Toggle custom state input visibility
-function toggleCustomState() {
-    const container = document.getElementById('custom_state_container');
-    container.classList.toggle('hidden');
-    document.getElementById('custom_state_input').focus();
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const countrySelect = document.getElementById('id_country');
+    const stateSelect = document.getElementById('id_state');
 
-// Add custom state to dropdown
-function addCustomState() {
-    const input = document.getElementById('custom_state_input');
-    const select = document.getElementById('id_state');
-    const customValue = input.value.trim();
-    
-    if (customValue) {
-        // Create and select new option
-        const option = new Option(customValue, customValue);
-        select.add(option);
-        select.value = customValue;
-        
-        // Reset input
-        input.value = '';
-        document.getElementById('custom_state_container').classList.add('hidden');
-    }
-}
-
-// Initialize for edit mode
-document.addEventListener('DOMContentLoaded', function() {
-    const savedState = "{{ resume_form.state.value|default:'' }}";
-    if (savedState) {
-        const select = document.getElementById('id_state');
-        
-        // Add saved state if not in options
-        if (!Array.from(select.options).some(opt => opt.value === savedState)) {
-            const option = new Option(savedState, savedState);
-            select.add(option);
+    const countryStateData = {
+        countries: [
+            { code: "US", name: "United States" },
+            { code: "CA", name: "Canada" },
+            { code: "GB", name: "United Kingdom" },
+            { code: "AU", name: "Australia" },
+            { code: "IN", name: "India" }
+        ],
+        states: {
+            'US': [
+                { code: "CA", name: "California" },
+                { code: "TX", name: "Texas" },
+                { code: "NY", name: "New York" }
+                // Add more if needed
+            ],
+            'CA': [
+                { code: "ON", name: "Ontario" },
+                { code: "QC", name: "Quebec" },
+                { code: "BC", name: "British Columbia" }
+                // Add more if needed
+            ],
+            'IN': [
+                { code: "AP", name: "Andhra Pradesh" },
+                { code: "AR", name: "Arunachal Pradesh" },
+                { code: "AS", name: "Assam" },
+                { code: "BR", name: "Bihar" },
+                { code: "CT", name: "Chhattisgarh" },
+                { code: "GA", name: "Goa" },
+                { code: "GJ", name: "Gujarat" },
+                { code: "HR", name: "Haryana" },
+                { code: "HP", name: "Himachal Pradesh" },
+                { code: "JH", name: "Jharkhand" },
+                { code: "KA", name: "Karnataka" },
+                { code: "KL", name: "Kerala" },
+                { code: "MP", name: "Madhya Pradesh" },
+                { code: "MH", name: "Maharashtra" },
+                { code: "MN", name: "Manipur" },
+                { code: "ML", name: "Meghalaya" },
+                { code: "MZ", name: "Mizoram" },
+                { code: "NL", name: "Nagaland" },
+                { code: "OD", name: "Odisha" },
+                { code: "PB", name: "Punjab" },
+                { code: "RJ", name: "Rajasthan" },
+                { code: "SK", name: "Sikkim" },
+                { code: "TN", name: "Tamil Nadu" },
+                { code: "TG", name: "Telangana" },
+                { code: "TR", name: "Tripura" },
+                { code: "UP", name: "Uttar Pradesh" },
+                { code: "UT", name: "Uttarakhand" },
+                { code: "WB", name: "West Bengal" },
+                // Union Territories
+                { code: "AN", name: "Andaman and Nicobar Islands" },
+                { code: "CH", name: "Chandigarh" },
+                { code: "DN", name: "Dadra and Nagar Haveli and Daman and Diu" },
+                { code: "DL", name: "Delhi" },
+                { code: "JK", name: "Jammu and Kashmir" },
+                { code: "LA", name: "Ladakh" },
+                { code: "LD", name: "Lakshadweep" },
+                { code: "PY", name: "Puducherry" }
+            ],
+            'AU': [
+                { code: "NSW", name: "New South Wales" },
+                { code: "VIC", name: "Victoria" },
+                { code: "QLD", name: "Queensland" }
+                // Add more if needed
+            ],
+            'GB': [
+                { code: "ENG", name: "England" },
+                { code: "SCT", name: "Scotland" },
+                { code: "WLS", name: "Wales" },
+                { code: "NIR", name: "Northern Ireland" }
+            ]
         }
-        
-        select.value = savedState;
+    };
+
+    countryStateData.countries.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country.code;
+        option.textContent = country.name;
+
+        if (country.code === "{{ form.country.value|default:'' }}") {
+            option.selected = true;
+        }
+
+        countrySelect.appendChild(option);
+    });
+
+    countrySelect.addEventListener('change', function () {
+        stateSelect.disabled = !this.value;
+        stateSelect.innerHTML = '<option value="">Select a state</option>';
+
+        if (this.value && countryStateData.states[this.value]) {
+            countryStateData.states[this.value].forEach(state => {
+                const option = document.createElement('option');
+                option.value = state.code;
+                option.textContent = state.name;
+
+                if (state.code === "{{ form.state.value|default:'' }}") {
+                    option.selected = true;
+                }
+
+                stateSelect.appendChild(option);
+            });
+        }
+    });
+
+    if (countrySelect.value) {
+        countrySelect.dispatchEvent(new Event('change'));
     }
 });
