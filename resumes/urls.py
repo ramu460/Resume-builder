@@ -13,7 +13,7 @@ urlpatterns = [
     path('<int:pk>/download/', views.download_resume_pdf, name='download_resume'),
     path('<int:pk>/templates/', views.choose_template, name='choose_template'),
     path('coming-soon/', views.coming_soon, name='coming_soon'),
-
-    path('api/get-states/<str:country_code>/', views.get_states, name='get_states'),
-    path('api/get-countries/', views.get_countries, name='get_countries'),
+   
+    path('get-countries/', views.get_countries, name='get_countries'),
+    path('get-states/<str:country_code>/', views.get_states, name='get_states'),
 ]

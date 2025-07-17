@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentCountry = countrySelect.value;
     const currentState = stateSelect.value;
 
-    fetch("/api/get-countries/")
+    fetch("/get-countries/")
         .then(res => res.json())
         .then(data => {
             countrySelect.innerHTML = '<option value="">Select Country</option>';
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetch(`/api/get-states/${countryCode}/`)
+        fetch(`/get-states/${countryCode}/`)
             .then(res => res.json())
             .then(states => {
                 stateSelect.innerHTML = '<option value="">Select a state</option>';
