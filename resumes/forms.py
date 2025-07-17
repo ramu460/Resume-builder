@@ -74,16 +74,18 @@ class ResumeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Dynamically populate state dropdown if editing existing resume
+    # Dynamically populate state dropdown if editing existing resume
         if self.instance and self.instance.country:
             try:
-                subdivisions = pycountry.subdivisions.get(country_code=self.instance.country.upper())
-                self.fields['state'].widget.choices = [('', 'Select State')] + [
-                    (s.code, s.name) for s in subdivisions
+            # Fix: Properly get subdivisions
+                subdivisions = list(pycountry.subdivisions.get(country_code=self.instance.country.upper()))
+                if subdivisions:
+                    self.fields['state'].widget.choices = [('', 'Select State')] + [
+                        (s.code, s.name) for s in subdivisions
                 ]
-                self.fields['state'].widget.attrs.pop('disabled', None)
+                    self.fields['state'].widget.attrs.pop('disabled', None)
             except Exception:
-                pass
+                pass    
         
 class EducationForm(forms.ModelForm):
     class Meta:

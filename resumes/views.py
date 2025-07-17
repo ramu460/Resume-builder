@@ -336,17 +336,17 @@ def get_countries(request):
     return JsonResponse(countries, safe=False)
 
 
-def get_states(request):
+def get_states(request, country_code):
     """
-    API endpoint to return states for a given country_code (GET param)
-    Example: /api/get-states/?country_code=IN
+    API endpoint to return states for a given country_code
     """
-    country_code = request.GET.get("country_code")
     if not country_code:
         return JsonResponse({"error": "Missing country_code"}, status=400)
 
     try:
-        subdivisions = pycountry.subdivisions.get(country_code=country_code.upper())
+        # Get all subdivisions for the country
+        subdivisions = list(pycountry.subdivisions.get(country_code=country_code.upper()))
+        
         if not subdivisions:
             return JsonResponse([], safe=False)
 

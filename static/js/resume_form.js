@@ -102,7 +102,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const option = document.createElement("option");
                 option.value = country.code;
                 option.textContent = country.name;
-                if (country.value === countrySelect.dataset.selected) {
+                // Fix: Check against country.code, not country.value
+                if (country.code === countrySelect.dataset.selected) {
                     option.selected = true;
                 }
                 countrySelect.appendChild(option);
@@ -120,7 +121,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetch(`/api/get-states/?country_code=${countryCode}`)
+        // Fix: Use the correct URL pattern
+        fetch(`/api/get-states/${countryCode}/`)
             .then(res => res.json())
             .then(states => {
                 stateSelect.innerHTML = '<option value="">Select a state</option>';
