@@ -323,34 +323,28 @@ def coming_soon(request):
 
 
 
-# Add these new function-based views at the bottom of the file
 def get_countries(request):
-    """
-    API endpoint to return all countries (code + name)
-    Example: [{"code": "IN", "name": "India"}, ...]
-    """
     countries = [
         {'code': c.alpha_2, 'name': c.name}
         for c in pycountry.countries
     ]
+    countries.sort(key=lambda x: x['name'])
     return JsonResponse(countries, safe=False)
 
-
 def get_states(request, country_code):
-    """
-    API endpoint to return states for a given country_code
-    """
     if not country_code:
         return JsonResponse({"error": "Missing country_code"}, status=400)
-
     try:
-        # Get all subdivisions for the country
-        subdivisions = list(pycountry.subdivisions.get(country_code=country_code.upper()))
+        subdivisions = []
+        for subdivision in pycountry.subdivisions:
+            if subdivision.country_code == country_code.upper():
+                subdivisions.append(subdivision)
         
-        if not subdivisions:
-            return JsonResponse([], safe=False)
-
-        states = [{'code': s.code, 'name': s.name} for s in subdivisions]
+        states = [
+            {'code': s.code, 'name': s.name} 
+            for s in subdivisions
+        ]
+        states.sort(key=lambda x: x['name'])
         return JsonResponse(states, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

@@ -94,25 +94,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const countrySelect = document.getElementById("id_country");
     const stateSelect = document.getElementById("id_state");
 
-    // Populate country dropdown
+    const currentCountry = countrySelect.value;
+    const currentState = stateSelect.value;
+
     fetch("/api/get-countries/")
         .then(res => res.json())
         .then(data => {
+            countrySelect.innerHTML = '<option value="">Select Country</option>';
+            
             data.forEach(country => {
                 const option = document.createElement("option");
                 option.value = country.code;
                 option.textContent = country.name;
-                // Fix: Check against country.code, not country.value
-                if (country.code === countrySelect.dataset.selected) {
+                if (country.code === currentCountry) {
                     option.selected = true;
                 }
                 countrySelect.appendChild(option);
             });
+            
+            if (currentCountry) {
+                loadStates(currentCountry, currentState);
+            }
         });
 
-    // On country change, load states
-    countrySelect.addEventListener("change", function () {
-        const countryCode = this.value;
+    function loadStates(countryCode, selectedState = null) {
         stateSelect.innerHTML = '<option value="">Loading...</option>';
         stateSelect.setAttribute("disabled", true);
 
@@ -121,7 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Fix: Use the correct URL pattern
         fetch(`/api/get-states/${countryCode}/`)
             .then(res => res.json())
             .then(states => {
@@ -131,6 +135,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         const option = document.createElement("option");
                         option.value = state.code;
                         option.textContent = state.name;
+                        if (selectedState && state.code === selectedState) {
+                            option.selected = true;
+                        }
                         stateSelect.appendChild(option);
                     });
                     stateSelect.removeAttribute("disabled");
@@ -143,5 +150,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 stateSelect.setAttribute("disabled", true);
                 console.error(err);
             });
+    }
+
+    countrySelect.addEventListener("change", function () {
+        loadStates(this.value);
     });
 });
