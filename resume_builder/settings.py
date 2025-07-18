@@ -10,6 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+
+import sys
+sys.path.append('/opt/render/project/src/.venv/lib/python3.13/site-packages')
+
 from datetime import timedelta
 import os
 from pathlib import Path
