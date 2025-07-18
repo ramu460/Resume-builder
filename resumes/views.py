@@ -10,7 +10,6 @@ from .forms import (ResumeForm, EducationForm, ExperienceForm, ProjectForm, Cert
 from weasyprint import HTML
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-from .models import Skill
 from django.db.models import Q
 
 

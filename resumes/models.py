@@ -35,17 +35,16 @@ class Resume(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
-    address = models.CharField(max_length=255)
-    summary = models.TextField()
+    address = models.TextField(blank=True)
+    summary = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     github_url = models.URLField(blank=True, null=True)
     linkedin_url = models.URLField(blank=True, null=True)
-    phone_country_code = models.CharField(max_length=5, default='+1')
+    phone_country_code = models.CharField(max_length=7, default='+1')
     portfolio_url = models.URLField(blank=True, null=True)
-    country = CountryField(blank_label='(Select Country)')
-    state = models.CharField(max_length=100, blank=True, null=True)
-    job_title = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=150, blank=True, null=True)
+    state = models.CharField(max_length=150, blank=True, null=True)
     skills = models.ManyToManyField(Skill, blank=True)
     
     TEMPLATE_CHOICES = [
@@ -60,17 +59,21 @@ class Resume(models.Model):
     template = models.CharField(max_length=20, choices=TEMPLATE_CHOICES, default='classic')
 
     class Meta:
-        ordering = ['-updated_at'] 
-
-    def get_country_name(self):
-        try:
-            return pycountry.countries.get(alpha_2=self.country).name
-        except:
-            return None
-
+        ordering = ['-updated_at']
+        verbose_name = "Resume"
+        verbose_name_plural = "Resumes"
     @property
     def skills_list(self):
         return list(self.skills.values_list('name', flat=True))    
+    
+    def clean(self):
+        """Add validation logic for country/state relationships"""
+        super().clean()
+        # Add custom validation if needed
+    
+    def __str__(self):
+        return f"{self.full_name} - {self.title}"
+
 
 class Education(models.Model):
     """Model to store education info"""
