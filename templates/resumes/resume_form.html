@@ -217,7 +217,88 @@
 <script src="{% static 'js/resume_form.js' %}"></script>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const countrySelect = document.getElementById("id_country");
+    const stateSelect = document.getElementById("id_state");
+    
+    // Get current values from the form (for edit scenarios)
+    const currentCountry = "{{ resume_form.country.value|default:'' }}";
+    const currentState = "{{ resume_form.state.value|default:'' }}";
 
+    // Initialize countries on page load
+    initializeCountries();
+
+    function initializeCountries() {
+        fetch("{% url 'get_countries' %}")
+            .then(response => response.json())
+            .then(countries => {
+                countrySelect.innerHTML = '<option value="">Select Country</option>';
+                
+                countries.forEach(country => {
+                    const option = document.createElement("option");
+                    option.value = country.code;
+                    option.textContent = country.name;
+                    
+                    if (country.code === currentCountry) {
+                        option.selected = true;
+                    }
+                    
+                    countrySelect.appendChild(option);
+                });
+
+                // Load states if country is already selected
+                if (currentCountry) {
+                    loadStates(currentCountry, currentState);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading countries:', error);
+            });
+    }
+
+    function loadStates(countryCode, selectedState = null) {
+        if (!countryCode) {
+            stateSelect.innerHTML = '<option value="">Select country first</option>';
+            stateSelect.disabled = true;
+            return;
+        }
+
+        stateSelect.innerHTML = '<option value="">Loading states...</option>';
+        stateSelect.disabled = true;
+
+        fetch(`{% url 'get_states' '0000' %}`.replace('0000', countryCode))
+            .then(response => response.json())
+            .then(states => {
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                
+                states.forEach(state => {
+                    const option = document.createElement("option");
+                    option.value = state.code;
+                    option.textContent = state.name;
+                    
+                    if (selectedState && state.code === selectedState) {
+                        option.selected = true;
+                    }
+                    
+                    stateSelect.appendChild(option);
+                });
+                
+                stateSelect.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error loading states:', error);
+                stateSelect.innerHTML = '<option value="">Error loading states</option>';
+            });
+    }
+
+    // Event listener for country change
+    countrySelect.addEventListener("change", function() {
+        loadStates(this.value);
+    });
+});
+</script>
+
+<script>
 // Initialize selected skills
 let selectedSkills = new Set();
 

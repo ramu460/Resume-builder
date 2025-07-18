@@ -26,63 +26,107 @@ class ResumeForm(forms.ModelForm):
             'address', 'summary', 'github_url', 'linkedin_url',
             'country', 'state'
         ]
-
+        
         widgets = {
             'title': forms.TextInput(attrs={
-                'placeholder': 'e.g. Backend Developer',
-                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'placeholder': 'e.g., Software Engineer'
+            }),
+            'full_name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'placeholder': 'Your full name',
+                'required': True
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'placeholder': 'your.email@example.com',
+                'required': True
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'placeholder': '123-456-7890'
+            }),
+            'phone_country_code': forms.Select(attrs={
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+            }),
+            'address': forms.Textarea(attrs={
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'rows': 3,
+                'placeholder': 'Your address'
             }),
             'summary': forms.Textarea(attrs={
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
                 'rows': 4,
-                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                'placeholder': 'Brief summary about yourself'
             }),
             'github_url': forms.URLInput(attrs={
-                'placeholder': 'https://github.com/username',
-                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'placeholder': 'https://github.com/yourusername'
             }),
             'linkedin_url': forms.URLInput(attrs={
-                'placeholder': 'https://linkedin.com/in/username',
-                'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'placeholder': 'https://linkedin.com/in/yourusername'
             }),
-            'phone_country_code': forms.Select(
-                choices=[('', 'Select Code')] + [
-                    (c.alpha_2, f"{c.name} (+{c.numeric})") for c in pycountry.countries
-                ],
-                attrs={
-                    'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
-                }
-            ),
-            'country': forms.Select(
-                attrs={
-                    'id': 'id_country',
-                    'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
-                    }
-            ),
-            'state': forms.Select(
-                choices=[('', 'Select State')],
-                attrs={
-                    'id': 'id_state',
-                    'disabled': True,
-                    'class': 'block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
-                }
-            ),
+            'country': forms.Select(attrs={
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'id': 'id_country'
+            }),
+            'state': forms.Select(attrs={
+                'class': 'w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+                'id': 'id_state'
+            }),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    # Dynamically populate state dropdown if editing existing resume
-        if self.instance and self.instance.country:
+        
+        # Set up country choices
+        country_choices = [('', 'Select Country')]
+        for country in pycountry.countries:
+            country_choices.append((country.alpha_3, country.name))
+        country_choices.sort(key=lambda x: x[1])
+        self.fields['country'].widget.choices = country_choices
+        
+        # Set up phone country code choices
+        phone_code_choices = [('', 'Country Code')]
+        calling_codes = {
+            'USA': '+1', 'CAN': '+1', 'GBR': '+44', 'DEU': '+49', 'FRA': '+33',
+            'ITA': '+39', 'ESP': '+34', 'AUS': '+61', 'JPN': '+81', 'CHN': '+86',
+            'IND': '+91', 'BRA': '+55', 'RUS': '+7', 'MEX': '+52', 'ARG': '+54',
+            'NLD': '+31', 'BEL': '+32', 'CHE': '+41', 'AUT': '+43', 'SWE': '+46',
+            'NOR': '+47', 'DNK': '+45', 'FIN': '+358', 'POL': '+48', 'CZE': '+420',
+            'HUN': '+36', 'PRT': '+351', 'GRC': '+30', 'TUR': '+90', 'ZAF': '+27',
+            'EGY': '+20', 'NGA': '+234', 'KEN': '+254', 'SGP': '+65', 'MYS': '+60',
+            'THA': '+66', 'VNM': '+84', 'PHL': '+63', 'IDN': '+62', 'KOR': '+82',
+            'TWN': '+886', 'HKG': '+852', 'MAC': '+853', 'ARE': '+971', 'SAU': '+966',
+            'ISR': '+972', 'JOR': '+962', 'LBN': '+961', 'IRQ': '+964', 'IRN': '+98',
+            'PAK': '+92', 'BGD': '+880', 'LKA': '+94', 'NPL': '+977', 'AFG': '+93',
+            'UZB': '+998', 'KAZ': '+7', 'KGZ': '+996', 'TJK': '+992', 'TKM': '+993',
+        }
+        
+        for country in pycountry.countries:
+            code = calling_codes.get(country.alpha_3, '')
+            if code:
+                phone_code_choices.append((code, f"{code} ({country.name})"))
+        
+        phone_code_choices.sort(key=lambda x: x[1])
+        self.fields['phone_country_code'].widget.choices = phone_code_choices
+        
+        # Initialize state field
+        self.fields['state'].widget.choices = [('', 'Select State')]
+        
+        # If editing existing instance and has country, populate states
+        if self.instance and self.instance.pk and self.instance.country:
             try:
-            # Fix: Properly get subdivisions
-                subdivisions = list(pycountry.subdivisions.get(country_code=self.instance.country.upper()))
-                if subdivisions:
-                    self.fields['state'].widget.choices = [('', 'Select State')] + [
-                        (s.code, s.name) for s in subdivisions
-                ]
-                    self.fields['state'].widget.attrs.pop('disabled', None)
-            except Exception:
-                pass    
+                # Get states for the selected country
+                state_choices = [('', 'Select State')]
+                for subdivision in pycountry.subdivisions:
+                    if subdivision.country_code == self.instance.country[:2]:  # Use first 2 chars for alpha-2
+                        state_choices.append((subdivision.code, subdivision.name))
+                state_choices.sort(key=lambda x: x[1])
+                self.fields['state'].widget.choices = state_choices
+            except:
+                pass
         
 class EducationForm(forms.ModelForm):
     class Meta:
