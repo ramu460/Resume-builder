@@ -2,7 +2,6 @@
 from .views import download_resume_pdf
 from django.urls import path
 from .import views
-from .views import get_countries, get_states
 
 urlpatterns = [
     path('', views.resume_list, name='resume_list'),
