@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import pycountry
+from django_countries.fields import CountryField
 
 class Skill(models.Model):
     """Model to store skills"""
@@ -40,9 +41,9 @@ class Resume(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
     github_url = models.URLField(blank=True, null=True)
     linkedin_url = models.URLField(blank=True, null=True)
-    phone_country_code = models.CharField(max_length=5, blank=True, null=True)
+    phone_country_code = models.CharField(max_length=5, default='+1')
     portfolio_url = models.URLField(blank=True, null=True)
-    country = models.CharField(max_length=100, blank=True, null=True)
+    country = CountryField(blank_label='(Select Country)')
     state = models.CharField(max_length=100, blank=True, null=True)
     job_title = models.CharField(max_length=100, blank=True)
     skills = models.ManyToManyField(Skill, blank=True)

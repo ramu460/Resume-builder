@@ -324,27 +324,16 @@ def coming_soon(request):
 
 
 def get_countries(request):
-    countries = [
-        {'code': c.alpha_2, 'name': c.name}
-        for c in pycountry.countries
-    ]
-    countries.sort(key=lambda x: x['name'])
+    """AJAX endpoint to get all countries"""
+    countries = [{'code': c.alpha_2, 'name': c.name} for c in pycountry.countries]
     return JsonResponse(countries, safe=False)
 
+
 def get_states(request, country_code):
-    if not country_code:
-        return JsonResponse({"error": "Missing country_code"}, status=400)
+    """AJAX endpoint to get states for a country"""
     try:
-        subdivisions = []
-        for subdivision in pycountry.subdivisions:
-            if subdivision.country_code == country_code.upper():
-                subdivisions.append(subdivision)
-        
-        states = [
-            {'code': s.code, 'name': s.name} 
-            for s in subdivisions
-        ]
-        states.sort(key=lambda x: x['name'])
+        subdivisions = pycountry.subdivisions.get(country_code=country_code.upper())
+        states = [{'code': s.code, 'name': s.name} for s in subdivisions]
         return JsonResponse(states, safe=False)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    except (KeyError, AttributeError):
+        return JsonResponse([], safe=False)

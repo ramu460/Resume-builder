@@ -90,69 +90,134 @@ window.addEventListener('DOMContentLoaded', function () {
 // window.toggleSection = toggleSection; // Keep this if it's used outside the formset script
 //state.js
 // Toggle custom state input visibility
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     const countrySelect = document.getElementById("id_country");
     const stateSelect = document.getElementById("id_state");
 
-    const currentCountry = countrySelect.value;
-    const currentState = stateSelect.value;
+    // Get current values from the form (for edit scenarios)
+    const currentCountry = "{{ form.country.value|default:'' }}";
+    const currentState = "{{ form.state.value|default:'' }}";
 
-    fetch("/get-countries/")
-        .then(res => res.json())
-        .then(data => {
-            countrySelect.innerHTML = '<option value="">Select Country</option>';
-            
-            data.forEach(country => {
-                const option = document.createElement("option");
-                option.value = country.code;
-                option.textContent = country.name;
-                if (country.code === currentCountry) {
-                    option.selected = true;
+    // Initialize the country dropdown
+    function initializeCountries() {
+        // Show loading state
+        countrySelect.innerHTML = '<option value="">Loading countries...</option>';
+        
+        fetch("{% url 'get_countries' %}")
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(countries => {
+                // Build country options
+                countrySelect.innerHTML = '<option value="">Select Country</option>';
+                
+                countries.forEach(country => {
+                    const option = document.createElement("option");
+                    option.value = country.code;
+                    option.textContent = country.name;
+                    
+                    // Set selected if this is the current country
+                    if (country.code === currentCountry) {
+                        option.selected = true;
+                    }
+                    
+                    countrySelect.appendChild(option);
+                });
+
+                // If we have a country selected, load its states
+                if (currentCountry) {
+                    loadStates(currentCountry, currentState);
                 }
-                countrySelect.appendChild(option);
+            })
+            .catch(error => {
+                console.error('Error loading countries:', error);
+                countrySelect.innerHTML = '<option value="">Error loading countries</option>';
             });
-            
-            if (currentCountry) {
-                loadStates(currentCountry, currentState);
-            }
-        });
+    }
 
+    // Load states for a selected country
     function loadStates(countryCode, selectedState = null) {
-        stateSelect.innerHTML = '<option value="">Loading...</option>';
-        stateSelect.setAttribute("disabled", true);
+        // Show loading state and disable dropdown
+        stateSelect.innerHTML = '<option value="">Loading states...</option>';
+        stateSelect.disabled = true;
 
+        // If no country selected, reset the state dropdown
         if (!countryCode) {
-            stateSelect.innerHTML = '<option value="">Select a state</option>';
+            stateSelect.innerHTML = '<option value="">Select country first</option>';
             return;
         }
 
-        fetch(`/get-states/${countryCode}/`)
-            .then(res => res.json())
+        fetch(`{% url 'get_states' '0000' %}`.replace('0000', countryCode))
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(states => {
-                stateSelect.innerHTML = '<option value="">Select a state</option>';
+                // Reset the state dropdown
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                
                 if (states.length > 0) {
+                    // Add all states as options
                     states.forEach(state => {
                         const option = document.createElement("option");
                         option.value = state.code;
                         option.textContent = state.name;
+                        
+                        // Set selected if this is the current state
                         if (selectedState && state.code === selectedState) {
                             option.selected = true;
                         }
+                        
                         stateSelect.appendChild(option);
                     });
-                    stateSelect.removeAttribute("disabled");
+                    
+                    // Enable the dropdown
+                    stateSelect.disabled = false;
                 } else {
+                    // No states available for this country
                     stateSelect.innerHTML = '<option value="">No states available</option>';
-                    stateSelect.setAttribute("disabled", true);
+                    
+                    // Convert to text input if no states exist
+                    convertToTextInput(countryCode, selectedState);
                 }
-            }).catch(err => {
+            })
+            .catch(error => {
+                console.error('Error loading states:', error);
                 stateSelect.innerHTML = '<option value="">Error loading states</option>';
-                stateSelect.setAttribute("disabled", true);
-                console.error(err);
+                convertToTextInput(countryCode, selectedState);
             });
     }
 
-    countrySelect.addEventListener("change", function () {
+    // Convert state dropdown to text input when no states are available
+    function convertToTextInput(countryCode, currentValue = '') {
+        const stateContainer = stateSelect.parentElement;
+        
+        // Create text input
+        const textInput = document.createElement("input");
+        textInput.type = "text";
+        textInput.name = stateSelect.name;
+        textInput.id = stateSelect.id;
+        textInput.value = currentValue || '';
+        textInput.className = "block w-full px-3 py-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500";
+        
+        // Replace select with input
+        stateContainer.replaceChild(textInput, stateSelect);
+    }
+
+    // Event listener for country change
+    countrySelect.addEventListener("change", function() {
         loadStates(this.value);
     });
+
+    // Initialize the form
+    initializeCountries();
+
+    // Add a small delay to ensure all elements are ready
+    setTimeout(() => {
+        // If we're editing and have a country but no state dropdown (due to error)
+        if (currentCountry && stateSelect.disabled) {
+            convertToTextInput(currentCountry, currentState);
+        }
+    }, 300);
 });

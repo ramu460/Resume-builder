@@ -2,6 +2,7 @@
 from .views import download_resume_pdf
 from django.urls import path
 from .import views
+from .views import get_countries, get_states
 
 urlpatterns = [
     path('', views.resume_list, name='resume_list'),
@@ -13,7 +14,8 @@ urlpatterns = [
     path('<int:pk>/download/', views.download_resume_pdf, name='download_resume'),
     path('<int:pk>/templates/', views.choose_template, name='choose_template'),
     path('coming-soon/', views.coming_soon, name='coming_soon'),
-   
-    path('get-countries/', views.get_countries, name='get_countries'),
-    path('get-states/<str:country_code>/', views.get_states, name='get_states'),
+        
+    # AJAX endpoints for country/state dropdowns
+    path('get-countries/', get_countries, name='get_countries'),
+    path('get-states/<str:country_code>/', get_states, name='get_states'),
 ]
