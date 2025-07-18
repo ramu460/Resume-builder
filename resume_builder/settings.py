@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_recaptcha',
     'drf_yasg',
+    'django_countries',
 ]
 
 MIDDLEWARE = [
