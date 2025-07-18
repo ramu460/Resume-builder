@@ -13,40 +13,14 @@ from django.http import JsonResponse
 from django.db.models import Q
 
 
-@login_required
-def get_countries_ajax(request):
-    """AJAX endpoint to get all countries"""
-    countries = []
-    for country in pycountry.countries:
-        countries.append({
-            'code': country.alpha_3,
-            'name': country.name
-        })
-    countries.sort(key=lambda x: x['name'])
-    return JsonResponse(countries, safe=False)
-
-@login_required  
-def get_states_ajax(request, country_code):
-    """AJAX endpoint to get states for a specific country"""
-    states = []
-    
-    if country_code:
-        try:
-            # Convert alpha-3 to alpha-2 if needed
-            country_alpha2 = country_code[:2] if len(country_code) == 3 else country_code
-            
-            for subdivision in pycountry.subdivisions:
-                if subdivision.country_code == country_alpha2:
-                    states.append({
-                        'code': subdivision.code,
-                        'name': subdivision.name
-                    })
-            
-            states.sort(key=lambda x: x['name'])
-        except Exception as e:
-            print(f"Error getting states for {country_code}: {e}")
-    
-    return JsonResponse(states, safe=False)
+def get_states(request, country):
+    """AJAX endpoint for state dropdown"""
+    states = {
+        'India': ['Delhi', 'Maharashtra', 'Karnataka'],
+        'United States': ['California', 'New York', 'Texas'],
+        'Canada': ['Ontario', 'Quebec', 'British Columbia']
+    }
+    return JsonResponse({'states': states.get(country, [])})
 
 
 @login_required

@@ -14,8 +14,5 @@ urlpatterns = [
     path('<int:pk>/templates/', views.choose_template, name='choose_template'),
     path('coming-soon/', views.coming_soon, name='coming_soon'),
         
-    #    
-    # AJAX endpoints for country/state functionality
-    path('api/countries/', views.get_countries_ajax, name='get_countries'),
-    path('api/states/<str:country_code>/', views.get_states_ajax, name='get_states'),
+    path('get-states/<str:country>/', views.get_states, name='get_states'),
 ]
