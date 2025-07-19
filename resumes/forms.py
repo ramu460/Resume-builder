@@ -24,6 +24,7 @@ COUNTRIES = [
     ('India', 'India'),
     ('United States', 'United States'),
     ('Canada', 'Canada'),
+    
 ]
 
 STATES_BY_COUNTRY = {
@@ -50,12 +51,55 @@ STATES_BY_COUNTRY = {
     ],
 }
 
+PHONE_COUNTRY_CODES = [
+    ('+1', 'USA (+1)'),
+    ('+91', 'India (+91)'),
+    ('+44', 'UK (+44)'),
+    ('+61', 'Australia (+61)'),
+    ('+81', 'Japan (+81)'),
+    ('+49', 'Germany (+49)'),
+    ('+33', 'France (+33)'),
+    ('+86', 'China (+86)'),
+    ('+971', 'UAE (+971)'),
+    ('+65', 'Singapore (+65)'),
+    ('+94', 'Sri Lanka (+94)'),
+    ('+880', 'Bangladesh (+880)'),
+    ('+92', 'Pakistan (+92)'),
+    ('+7', 'Russia (+7)'),
+    ('+82', 'South Korea (+82)'),
+    ('+39', 'Italy (+39)'),
+    ('+34', 'Spain (+34)'),
+    ('+46', 'Sweden (+46)'),
+    ('+41', 'Switzerland (+41)'),
+    ('+27', 'South Africa (+27)'),
+    ('+32', 'Belgium (+32)'),
+    ('+31', 'Netherlands (+31)'),
+    ('+966', 'Saudi Arabia (+966)'),
+    ('+20', 'Egypt (+20)'),
+    ('+351', 'Portugal (+351)'),
+    ('+353', 'Ireland (+353)'),
+    ('+52', 'Mexico (+52)'),
+    ('+48', 'Poland (+48)'),
+    ('+380', 'Ukraine (+380)'),
+    ('+62', 'Indonesia (+62)'),
+    ('+60', 'Malaysia (+60)'),
+]
+
+
 class ResumeForm(forms.ModelForm):
+    phone_country_code = forms.ChoiceField(
+        choices=PHONE_COUNTRY_CODES,
+        initial='+1',
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'style': 'width: 100px;'
+        })
+    )
+
     class Meta:
         model = Resume
         fields = [
-            'title', 'full_name', 'email', 'phone', 
-            'address', 'summary', 'github_url', 
+            'title', 'full_name', 'email', 'phone_country_code','phone', 'address', 'summary', 'github_url', 
             'linkedin_url', 'country', 'state'
         ]
         

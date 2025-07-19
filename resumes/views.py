@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory, inlineformset_factory
 from django.http import HttpResponse
-import pycountry
 from requests import request
 from .models import Resume, Education, Experience, Skill, Project, Certification
 from .forms import (ResumeForm, EducationForm, ExperienceForm, ProjectForm, CertificationForm)
